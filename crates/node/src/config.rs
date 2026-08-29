@@ -79,6 +79,9 @@ fn param_from_byte(b: u8) -> Option<ParamId> {
         7 => ParamId::TimeoutPrecommitMs,
         8 => ParamId::TimeoutDeltaMs,
         9 => ParamId::MaxTimestampDriftMs,
+        10 => ParamId::MinSelfBond,
+        11 => ParamId::DelegationCap,
+        12 => ParamId::SlashPercent,
         _ => return None,
     })
 }
@@ -113,6 +116,9 @@ pub fn encode_genesis(g: &Genesis) -> Vec<u8> {
             ParamId::TimeoutPrecommitMs => 7,
             ParamId::TimeoutDeltaMs => 8,
             ParamId::MaxTimestampDriftMs => 9,
+            ParamId::MinSelfBond => 10,
+            ParamId::DelegationCap => 11,
+            ParamId::SlashPercent => 12,
         });
         p.extend_from_slice(&v.to_be_bytes());
     }

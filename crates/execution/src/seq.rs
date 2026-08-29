@@ -15,10 +15,11 @@
 //! `app_hash = blake3(state_root || tx_root || receipts_root)` (96-byte
 //! concatenation, **no** domain tag). Each root is 32 bytes in that order.
 
-use crate::checks::{balance_check, nonce_check};
+use crate::checks::{balance_check, nonce_check, value_balance_check};
 use crate::events::Event;
 use crate::gas::gas_meter;
 use crate::receipt::{Receipt, RejectReason};
+use crate::staking::{self, StakingState};
 use crypto::address::from_ed25519;
 use crypto::hash::blake3::hash_to_array;
 use crypto::sig::ed25519::public_key_from_bytes;
@@ -29,7 +30,7 @@ use state::tries::{AccountTrie, ContractStorageTrie};
 use types::block::{receipts_root, tx_root_signed, Block};
 use types::genesis::Genesis;
 use types::tx::SignedTx;
-use types::{Address, Hash};
+use types::{Address, Amount, Hash, ParamsRegistry};
 
 /// In-memory world state (accounts + empty contract storage at this tier).
 #[derive(Clone, Debug, Default)]
@@ -38,6 +39,10 @@ pub struct World {
     pub accounts: AccountTrie,
     /// Contract storage (empty for native transfers).
     pub storage: ContractStorageTrie,
+    /// Staking ledger (architecture.md §2.5). Not part of `state.commit_root` in this tier.
+    pub staking: StakingState,
+    /// `spec.params_registry` copy used by staking admission.
+    pub params: ParamsRegistry,
 }
 
 impl World {
@@ -50,6 +55,8 @@ impl World {
         Self {
             accounts,
             storage: ContractStorageTrie::new(),
+            staking: StakingState::default(),
+            params: g.params.registry.clone(),
         }
     }
 
@@ -106,16 +113,53 @@ pub fn apply_tx(world: &mut World, signed: &SignedTx) -> Receipt {
     if let Err(e) = nonce_check(tx, &sender) {
         return fail(e.into());
     }
+    let gas = match gas_meter(tx) {
+        Ok(g) => g,
+        Err(e) => return fail(e.into()),
+    };
+
+    if let Some(stake) = tx.as_stake() {
+        let debit = match stake.kind {
+            types::staking::StakeKind::Bond | types::staking::StakeKind::Delegate => stake.amount,
+            types::staking::StakeKind::Unbond
+            | types::staking::StakeKind::Undelegate
+            | types::staking::StakeKind::Withdraw => Amount::ZERO,
+        };
+        if let Err(e) = value_balance_check(tx, debit, &sender) {
+            return fail(e.into());
+        }
+        match staking::apply_stake_tx(&mut world.staking, &world.params, &from, tx) {
+            Ok(()) => {}
+            Err(r) => return fail(r),
+        }
+        let mut sender = sender;
+        let pay = debit.checked_add(tx.max_fee).expect("checked");
+        sender.balance = sender.balance.checked_sub(pay).expect("checked");
+        if stake.kind == types::staking::StakeKind::Withdraw {
+            sender.balance = sender
+                .balance
+                .checked_add(stake.amount)
+                .unwrap_or(sender.balance);
+        }
+        sender.nonce = sender.nonce.checked_add(1).unwrap_or(sender.nonce);
+        world.accounts.put(&from, &sender);
+        return Receipt {
+            success: true,
+            gas_used: gas,
+            events: vec![Event::Stake {
+                from,
+                amount: stake.amount,
+            }],
+            reason: None,
+        };
+    }
+
     let Some(transfer) = tx.as_transfer() else {
         return fail(RejectReason::Gas);
     };
     if let Err(e) = balance_check(tx, transfer, &sender) {
         return fail(e.into());
     }
-    let gas = match gas_meter(tx) {
-        Ok(g) => g,
-        Err(e) => return fail(e.into()),
-    };
 
     let mut sender = sender;
     sender.balance = sender

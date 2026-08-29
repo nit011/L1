@@ -33,6 +33,12 @@ pub enum ParamId {
     TimeoutDeltaMs,
     /// Max header timestamp drift vs local clock (ms).
     MaxTimestampDriftMs,
+    /// Minimum self-bond (tokens). Optional; omitted from [`ParamsRegistry::new`].
+    MinSelfBond,
+    /// Delegation voting-power cap. Optional; omitted from [`ParamsRegistry::new`].
+    DelegationCap,
+    /// Slash percent for equivocation. Optional; omitted from [`ParamsRegistry::new`].
+    SlashPercent,
 }
 
 /// Mutable parameter map. Uses [`crate::collections::Map`] so iteration is ordered.

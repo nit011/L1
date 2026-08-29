@@ -14,4 +14,11 @@ pub enum Event {
         /// Amount.
         amount: Amount,
     },
+    /// Staking mutation (`tx.stake.*`).
+    Stake {
+        /// Account that signed the envelope.
+        from: Address,
+        /// Amount moved in the staking ledger.
+        amount: Amount,
+    },
 }

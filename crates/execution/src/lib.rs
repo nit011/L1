@@ -7,3 +7,5 @@ pub mod fees;
 pub mod gas;
 pub mod receipt;
 pub mod seq;
+pub mod slash;
+pub mod staking;

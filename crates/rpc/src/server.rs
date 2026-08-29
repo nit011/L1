@@ -8,7 +8,7 @@
 
 use crate::block::{get_block, GetBlockError};
 use crate::state::{get_account, get_proof, StateRpcError};
-use crate::status::get_status;
+use crate::status::{get_checkpoint, get_status};
 use crate::sub::{subscribe, unsubscribe, SubError};
 use crate::tx::{get_tx, submit_tx, TxRpcError};
 use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
@@ -44,6 +44,8 @@ pub struct RpcInner {
     pub commits: CommitLog,
     /// Last `cons.commit` outcome (authoritative height/round).
     pub last_finalized: Option<Finalized>,
+    /// Latest `ws.checkpoint`.
+    pub checkpoint: Option<consensus::checkpoint::Checkpoint>,
     /// `netsec.peer_rate_limit` for `l1_submitTx`.
     pub limiter: PeerRateLimiter,
     /// Active JSON-RPC subscriptions (`l1_subscribe`).
@@ -74,6 +76,7 @@ impl RpcInner {
             world,
             commits: CommitLog::new(),
             last_finalized: None,
+            checkpoint: None,
             limiter: PeerRateLimiter::new(),
             subs: Map::new(),
             next_sub: 1,
@@ -197,6 +200,7 @@ pub fn dispatch(inner: &mut RpcInner, method: &str, params: &Value) -> Result<Va
         "l1_getAccount" => get_account(inner, params).map_err(Into::into),
         "l1_getProof" => get_proof(inner, params).map_err(Into::into),
         "l1_getStatus" => Ok(get_status(inner)),
+        "l1_getCheckpoint" => Ok(get_checkpoint(inner)),
         "l1_subscribe" => subscribe(inner, params).map_err(Into::into),
         "l1_unsubscribe" => unsubscribe(inner, params).map_err(Into::into),
         other => Err(RpcError::method_not_found(other)),

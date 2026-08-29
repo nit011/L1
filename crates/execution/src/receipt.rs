@@ -24,6 +24,14 @@ pub enum RejectReason {
     InsufficientBalance,
     /// Gas meter rejected the envelope.
     Gas,
+    /// Staking: below `staking.min_self_bond` (architecture.md §9.2).
+    StakeMinBond,
+    /// Staking: tombstoned validator key (`slash.tombstone`).
+    StakeTombstone,
+    /// Staking: withdraw before `staking.unbonding_period`.
+    StakeUnbonding,
+    /// Staking: insufficient bonded/delegated balance.
+    StakeInsufficient,
 }
 
 /// Receipt. Contract: `exec.receipt`.
@@ -51,6 +59,10 @@ impl Receipt {
             Some(RejectReason::InsufficientBalance) => 2,
             Some(RejectReason::Gas) => 3,
             Some(RejectReason::Signature) => 4,
+            Some(RejectReason::StakeMinBond) => 5,
+            Some(RejectReason::StakeTombstone) => 6,
+            Some(RejectReason::StakeUnbonding) => 7,
+            Some(RejectReason::StakeInsufficient) => 8,
         });
         p.extend_from_slice(&(self.events.len() as u32).to_be_bytes());
         for e in &self.events {
@@ -59,6 +71,11 @@ impl Receipt {
                     p.push(0);
                     p.extend_from_slice(from.as_bytes());
                     p.extend_from_slice(to.as_bytes());
+                    p.extend_from_slice(&amount.0.to_be_bytes());
+                }
+                Event::Stake { from, amount } => {
+                    p.push(1);
+                    p.extend_from_slice(from.as_bytes());
                     p.extend_from_slice(&amount.0.to_be_bytes());
                 }
             }

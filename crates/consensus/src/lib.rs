@@ -2,6 +2,7 @@
 //!
 //! Pure crate: no libp2p, no RocksDB feature, no `network` crate.
 
+pub mod checkpoint;
 pub mod evidence;
 pub mod leader;
 pub mod propose;

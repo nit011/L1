@@ -7,10 +7,13 @@
 //!  tag:u8 || …variant`
 //!
 //! Transfer (`tag = 0`): `to:32 || amount:u128`.
+//! Staking (`tags 1–5`): see [`crate::staking`] (`tx.stake.*`). Transfer layout
+//! is unchanged.
 //! Changing this layout forks `tx.sign` and `block.tx_root`.
 
 use crate::encoding::{decode, encode};
-use crate::{Address, Amount, ChainId, Nonce, TypesError};
+use crate::staking::{StakeKind, StakePayload};
+use crate::{Address, Amount, ChainId, Nonce, TypesError, ValidatorId};
 
 /// Native transfer payload. Contract: `tx.transfer`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -21,11 +24,13 @@ pub struct Transfer {
     pub amount: Amount,
 }
 
-/// Payload variants. Only `Transfer` exists at this tier (no WASM).
+/// Payload variants. Transfer tag `0` is frozen; staking is tags `1–5`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TxPayload {
     /// Plain transfer.
     Transfer(Transfer),
+    /// Staking (`tx.stake.bond` … `tx.stake.withdraw`).
+    Stake(StakePayload),
 }
 
 /// Unsigned envelope. Contract: `tx.envelope`.
@@ -79,6 +84,22 @@ impl Tx {
                 p.extend_from_slice(t.to.as_bytes());
                 p.extend_from_slice(&t.amount.0.to_be_bytes());
             }
+            TxPayload::Stake(s) => {
+                p.push(s.kind as u8);
+                match s.kind {
+                    StakeKind::Withdraw => {
+                        p.extend_from_slice(&s.amount.0.to_be_bytes());
+                    }
+                    StakeKind::Bond
+                    | StakeKind::Unbond
+                    | StakeKind::Delegate
+                    | StakeKind::Undelegate => {
+                        let id = s.validator.expect("stake target");
+                        p.extend_from_slice(id.as_bytes());
+                        p.extend_from_slice(&s.amount.0.to_be_bytes());
+                    }
+                }
+            }
         }
         p
     }
@@ -119,6 +140,55 @@ impl Tx {
                     }),
                 })
             }
+            1..=4 => {
+                if raw.len() != 41 + 48 + 16 {
+                    return Err(TypesError::BadLength {
+                        expected: 105,
+                        actual: raw.len(),
+                    });
+                }
+                let mut vid = [0u8; 48];
+                vid.copy_from_slice(&raw[41..89]);
+                let amount = Amount(u128::from_be_bytes(raw[89..105].try_into().unwrap()));
+                let kind = match tag {
+                    1 => StakeKind::Bond,
+                    2 => StakeKind::Unbond,
+                    3 => StakeKind::Delegate,
+                    4 => StakeKind::Undelegate,
+                    _ => unreachable!(),
+                };
+                Ok(Self {
+                    chain_id,
+                    nonce,
+                    gas_limit,
+                    max_fee,
+                    payload: TxPayload::Stake(StakePayload {
+                        kind,
+                        validator: Some(ValidatorId::from_bytes(vid)),
+                        amount,
+                    }),
+                })
+            }
+            5 => {
+                if raw.len() != 41 + 16 {
+                    return Err(TypesError::BadLength {
+                        expected: 57,
+                        actual: raw.len(),
+                    });
+                }
+                let amount = Amount(u128::from_be_bytes(raw[41..57].try_into().unwrap()));
+                Ok(Self {
+                    chain_id,
+                    nonce,
+                    gas_limit,
+                    max_fee,
+                    payload: TxPayload::Stake(StakePayload {
+                        kind: StakeKind::Withdraw,
+                        validator: None,
+                        amount,
+                    }),
+                })
+            }
             _ => Err(TypesError::Kv("unknown tx payload tag")),
         }
     }
@@ -127,6 +197,7 @@ impl Tx {
     pub fn as_transfer(&self) -> Option<&Transfer> {
         match &self.payload {
             TxPayload::Transfer(t) => Some(t),
+            TxPayload::Stake(_) => None,
         }
     }
 }

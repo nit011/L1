@@ -5,7 +5,9 @@
 //! `encoding.canonical.encode` so a third party can verify without trust.
 
 use crate::replay::{replay_key, vote_hash};
-use crate::vote::{verify_signature, VerifyError, Vote};
+use crate::vote::{signed_message, verify_signature, VerifyError, Vote};
+use blst::min_pk::{PublicKey, Signature};
+use crypto::sig::bls;
 use types::encoding::encode;
 
 /// Portable equivocation proof. Contract: `evidence.equivocation`.
@@ -71,6 +73,22 @@ pub fn equivocation(a: &Vote, b: &Vote) -> Result<Evidence, VerifyError> {
     })
 }
 
+fn independent_bls_verify(vote: &Vote) -> Result<(), VerifyError> {
+    let pk = PublicKey::from_bytes(vote.signer.as_bytes()).map_err(|_| VerifyError::Signature)?;
+    let sig = Signature::from_bytes(&vote.signature).map_err(|_| VerifyError::Signature)?;
+    let msg = signed_message(vote.height, vote.round, vote.kind, vote.block);
+    bls::verify(&pk, &msg, &sig).map_err(|_| VerifyError::Signature)
+}
+
+/// Self-certifying submission: both votes pass [`bls::verify`] independently,
+/// then the pair is checked as [`equivocation`]. Contract: `evidence.submission`.
+pub fn submit_evidence(ev: &Evidence) -> Result<Evidence, VerifyError> {
+    independent_bls_verify(&ev.a)?;
+    independent_bls_verify(&ev.b)?;
+    equivocation(&ev.a, &ev.b)?;
+    Ok(ev.clone())
+}
+
 fn block_bytes(v: &Vote) -> Vec<u8> {
     match v.block {
         crate::vote::VoteBlock::Nil => vec![0],
@@ -125,5 +143,9 @@ mod tests {
         let n = nil(&sk, id, Height::GENESIS, Round::ZERO, VoteKind::Prevote);
         let e2 = equivocation(&a, &n).unwrap();
         assert_ne!(e.encode(), e2.encode());
+        submit_evidence(&e).unwrap();
+        let mut bad = e.clone();
+        bad.a.signature[0] ^= 1;
+        assert!(submit_evidence(&bad).is_err());
     }
 }

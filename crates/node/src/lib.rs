@@ -4,3 +4,4 @@ pub mod config;
 pub mod sync;
 pub mod tracing;
 pub mod wire;
+pub mod ws;

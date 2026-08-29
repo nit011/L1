@@ -1,6 +1,7 @@
-//! `l1_getStatus`.
+//! `l1_getStatus` and `l1_getCheckpoint`.
 
 use crate::server::{encode_hex, RpcInner};
+use consensus::checkpoint::Checkpoint;
 use consensus::steps::Finalized;
 use serde_json::{json, Value};
 
@@ -37,10 +38,31 @@ pub fn observe_finalized(inner: &mut RpcInner, f: Finalized) {
     inner.last_finalized = Some(f);
 }
 
+/// Latest weak-subjectivity checkpoint. Contract: `service.l1.jsonrpc.getCheckpoint`.
+///
+/// Request: `{}`. Response: `{ "height", "headerHash" }` or nulls if none.
+pub fn get_checkpoint(inner: &RpcInner) -> Value {
+    match &inner.checkpoint {
+        Some(c) => json!({
+            "height": c.height.0,
+            "headerHash": encode_hex(c.header_hash.as_bytes()),
+        }),
+        None => json!({
+            "height": serde_json::Value::Null,
+            "headerHash": serde_json::Value::Null,
+        }),
+    }
+}
+
+/// Record a [`Checkpoint`] from `ws.checkpoint`.
+pub fn observe_checkpoint(inner: &mut RpcInner, c: Checkpoint) {
+    inner.checkpoint = Some(c);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::server::{dispatch, RpcInner};
+    use crate::server::{dispatch, encode_hex, RpcInner};
     use consensus::propose::round_vrf_source;
     use consensus::vrf as cons_vrf;
     use crypto::from_bls;
@@ -189,5 +211,47 @@ mod tests {
         assert_eq!(s["round"], f.round.0);
         assert_eq!(s["syncing"], false);
         assert_eq!(storage::blocks::tip(&inner.store).unwrap(), Some(f.height));
+    }
+
+    #[test]
+    fn get_checkpoint_surfaces_ws_checkpoint() {
+        let cfg = NodeConfig::new(
+            Genesis::new(ChainId::new(1)),
+            BootstrapList::new(),
+            identity::generate().unwrap(),
+            std::path::PathBuf::from("/tmp/rpc-cp"),
+        );
+        let mut inner = RpcInner::from_config(cfg);
+        let empty = dispatch(&mut inner, "l1_getCheckpoint", &json!({})).unwrap();
+        assert!(empty["height"].is_null());
+        let clock = TestClock::new(1_000);
+        let fields = types::header::HeaderFields::new(
+            &clock,
+            Height::GENESIS,
+            Round::ZERO,
+            ValidatorId::ZERO,
+            0,
+            1,
+        )
+        .unwrap();
+        let header = types::header::Header {
+            fields,
+            tx_root: types::Hash::ZERO,
+            state_root: types::Hash::ZERO,
+            receipts_root: types::Hash::ZERO,
+            validators_hash: types::Hash::ZERO,
+            da_root: types::header::DA_ROOT_PLACEHOLDER,
+        };
+        let f = Finalized {
+            height: header.fields.height,
+            round: header.fields.round,
+            block_hash: header.hash(),
+            app_hash: types::Hash::ZERO,
+        };
+        let cp = consensus::checkpoint::record_checkpoint(&f, &header).unwrap();
+        observe_checkpoint(&mut inner, cp.clone());
+        let v = dispatch(&mut inner, "l1_getCheckpoint", &json!({})).unwrap();
+        assert_eq!(v["height"], 0);
+        assert_eq!(v["headerHash"], encode_hex(cp.header_hash.as_bytes()));
     }
 }

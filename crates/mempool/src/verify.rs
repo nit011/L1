@@ -5,12 +5,13 @@
 use crypto::address::from_ed25519;
 use crypto::sig::ed25519::public_key_from_bytes;
 use crypto::tx::verify_ed25519;
-use execution::checks::{balance_check, nonce_check, CheckError};
+use execution::checks::{balance_check, nonce_check, value_balance_check, CheckError};
 use execution::gas::{gas_meter, GasError};
 use execution::receipt::RejectReason;
 use state::account::Account;
+use types::staking::StakeKind;
 use types::tx::{SignedTx, Tx};
-use types::Address;
+use types::{Address, Amount};
 
 /// Why a tx was not admitted.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -40,6 +41,10 @@ impl From<RejectReason> for VerifyError {
             RejectReason::WrongNonce => Self::WrongNonce,
             RejectReason::InsufficientBalance => Self::InsufficientBalance,
             RejectReason::Gas => Self::Gas,
+            RejectReason::StakeMinBond
+            | RejectReason::StakeTombstone
+            | RejectReason::StakeUnbonding
+            | RejectReason::StakeInsufficient => Self::InsufficientBalance,
         }
     }
 }
@@ -76,10 +81,18 @@ fn account_for_nonce_check(tx: &Tx, account: &Account) -> Result<Account, Verify
 pub fn verify(signed: &SignedTx, account: &Account) -> Result<(), VerifyError> {
     verify_ed25519(signed).map_err(|_| VerifyError::Signature)?;
     gas_meter(&signed.tx)?;
-    let Some(transfer) = signed.tx.as_transfer() else {
-        return Err(VerifyError::Gas);
-    };
-    balance_check(&signed.tx, transfer, account)?;
+    if let Some(stake) = signed.tx.as_stake() {
+        let debit = match stake.kind {
+            StakeKind::Bond | StakeKind::Delegate => stake.amount,
+            StakeKind::Unbond | StakeKind::Undelegate | StakeKind::Withdraw => Amount::ZERO,
+        };
+        value_balance_check(&signed.tx, debit, account)?;
+    } else {
+        let Some(transfer) = signed.tx.as_transfer() else {
+            return Err(VerifyError::Gas);
+        };
+        balance_check(&signed.tx, transfer, account)?;
+    }
     let nonce_acct = account_for_nonce_check(&signed.tx, account)?;
     nonce_check(&signed.tx, &nonce_acct)?;
     Ok(())

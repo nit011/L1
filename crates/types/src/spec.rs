@@ -37,6 +37,20 @@ pub const EPOCH_LENGTH: u64 = 100;
 /// PLACEHOLDER: unbonding period in heights. Finalized with staking (Tier 6 / 9).
 pub const UNBONDING_PERIOD: u64 = 1000;
 
+/// Weak-subjectivity checkpoint interval in heights (`ws.checkpoint`, architecture.md §2.4).
+/// Lives in `spec.constants` so adding a `ParamId` cannot fork frozen `genesis.hash`.
+pub const CHECKPOINT_INTERVAL: u64 = 10;
+
+/// Minimum self-bond (native tokens). Default when `ParamId::MinSelfBond` is unset
+/// (architecture.md §9.2). Not in `ParamsRegistry::new()` — that would change genesis.hash.
+pub const MIN_SELF_BOND: u64 = 100;
+
+/// Soft cap on voting power from **delegation** (architecture.md §9.2).
+pub const DELEGATION_CAP: u64 = 1000;
+
+/// Equivocation slash percentage (e.g. `5` = 5%). Default when `ParamId::SlashPercent` is unset.
+pub const SLASH_PERCENT: u64 = 5;
+
 /// Propose-step timeout at round 0, in milliseconds ([`crate::Clock::now_millis`] units).
 pub const TIMEOUT_PROPOSE_MS: u64 = 3_000;
 
@@ -76,6 +90,10 @@ mod tests {
         const {
             assert!(EPOCH_LENGTH > 0);
             assert!(UNBONDING_PERIOD > EPOCH_LENGTH);
+            assert!(CHECKPOINT_INTERVAL > 0);
+            assert!(MIN_SELF_BOND > 0);
+            assert!(DELEGATION_CAP > 0);
+            assert!(SLASH_PERCENT > 0 && SLASH_PERCENT < 100);
             assert!(TIMEOUT_PROPOSE_MS > 0);
             assert!(TIMEOUT_DELTA_MS > 0);
             assert!(MAX_TIMESTAMP_DRIFT_MS > 0);

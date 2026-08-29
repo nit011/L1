@@ -22,6 +22,7 @@ pub mod nonce;
 pub mod params;
 pub mod round;
 pub mod spec;
+pub mod staking;
 pub mod tx;
 pub mod validator;
 
@@ -39,10 +40,11 @@ pub use nonce::Nonce;
 pub use params::{ParamId, ParamsRegistry};
 pub use round::Round;
 pub use spec::{
-    ADDRESS_SIZE, GAS_TRANSFER, HASH_SIZE, MAX_BLOCK_BYTES, MAX_GAS, MAX_TIMESTAMP_DRIFT_MS,
-    MAX_TX_BYTES, MEMPOOL_MAX_TXS, MIN_TX_FEE, TIMEOUT_DELTA_MS, TIMEOUT_PRECOMMIT_MS,
-    TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS,
+    ADDRESS_SIZE, CHECKPOINT_INTERVAL, DELEGATION_CAP, GAS_TRANSFER, HASH_SIZE, MAX_BLOCK_BYTES,
+    MAX_GAS, MAX_TIMESTAMP_DRIFT_MS, MAX_TX_BYTES, MEMPOOL_MAX_TXS, MIN_SELF_BOND, MIN_TX_FEE,
+    SLASH_PERCENT, TIMEOUT_DELTA_MS, TIMEOUT_PRECOMMIT_MS, TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS,
 };
+pub use staking::{StakeKind, StakePayload};
 pub use validator::{ValidatorId, VotingPower};
 
 #[cfg(test)]

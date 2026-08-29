@@ -2,6 +2,7 @@
 
 use state::account::Account;
 use types::tx::{Transfer, Tx};
+use types::Amount;
 
 /// Distinguishable rejection reasons.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -23,8 +24,12 @@ pub fn nonce_check(tx: &Tx, account: &Account) -> Result<(), CheckError> {
 
 /// Sender can pay `transfer.amount + tx.max_fee`. Contract: `tx.balance_check`.
 pub fn balance_check(tx: &Tx, transfer: &Transfer, account: &Account) -> Result<(), CheckError> {
-    let need = transfer
-        .amount
+    value_balance_check(tx, transfer.amount, account)
+}
+
+/// Sender can pay `amount + tx.max_fee` (staking and transfers).
+pub fn value_balance_check(tx: &Tx, amount: Amount, account: &Account) -> Result<(), CheckError> {
+    let need = amount
         .checked_add(tx.max_fee)
         .ok_or(CheckError::InsufficientBalance)?;
     if account.balance.checked_sub(need).is_some() {

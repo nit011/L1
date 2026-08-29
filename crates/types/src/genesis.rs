@@ -154,6 +154,9 @@ fn param_id_byte(id: ParamId) -> u8 {
         ParamId::TimeoutPrecommitMs => 7,
         ParamId::TimeoutDeltaMs => 8,
         ParamId::MaxTimestampDriftMs => 9,
+        ParamId::MinSelfBond => 10,
+        ParamId::DelegationCap => 11,
+        ParamId::SlashPercent => 12,
     }
 }
 

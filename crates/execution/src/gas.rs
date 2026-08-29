@@ -18,7 +18,7 @@ pub fn gas_meter(tx: &Tx) -> Result<u64, GasError> {
         return Err(GasError::LimitExceedsBlock);
     }
     let cost = match &tx.payload {
-        types::tx::TxPayload::Transfer(_) => GAS_TRANSFER,
+        types::tx::TxPayload::Transfer(_) | types::tx::TxPayload::Stake(_) => GAS_TRANSFER,
     };
     if tx.gas_limit < cost {
         return Err(GasError::LimitTooLow);
