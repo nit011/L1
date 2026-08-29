@@ -13,3 +13,5 @@ consensus = { path = "../consensus" }
 
 [dev-dependencies]
 hex.workspace = true
+mempool = { path = "../mempool" }
+storage = { path = "../storage" }

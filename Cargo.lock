@@ -524,7 +524,9 @@ dependencies = [
  "consensus",
  "crypto",
  "hex",
+ "mempool",
  "state",
+ "storage",
  "thiserror",
  "types",
 ]
@@ -767,6 +769,8 @@ name = "mempool"
 version = "0.1.0"
 dependencies = [
  "crypto",
+ "execution",
+ "state",
  "thiserror",
  "types",
 ]
@@ -1264,6 +1268,10 @@ dependencies = [
 name = "storage"
 version = "0.1.0"
 dependencies = [
+ "crypto",
+ "execution",
+ "hex",
+ "mempool",
  "rocksdb",
  "thiserror",
  "types",

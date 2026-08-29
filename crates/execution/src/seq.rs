@@ -53,6 +53,11 @@ impl World {
         }
     }
 
+    /// Lookup an account (empty EOA if missing).
+    pub fn account(&self, addr: &Address) -> Account {
+        self.accounts.get(addr).unwrap_or_else(Account::empty)
+    }
+
     /// `state.commit_root` (and the types `block.state_root` combination).
     pub fn commit_state_root(&self) -> Hash {
         let a = self.accounts.root();

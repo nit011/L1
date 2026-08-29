@@ -18,6 +18,13 @@ pub const MAX_BLOCK_BYTES: u32 = 2 * 1024 * 1024;
 /// Maximum serialized transaction size.
 pub const MAX_TX_BYTES: u32 = 64 * 1024;
 
+/// Maximum number of transactions held in the local mempool (architecture.md §5).
+pub const MEMPOOL_MAX_TXS: u32 = 4_096;
+
+/// Flat minimum `max_fee` for mempool admission (architecture.md §5).
+/// Not a `ParamId`: adding one would change frozen `genesis.hash`.
+pub const MIN_TX_FEE: u128 = 1;
+
 /// Maximum gas per block.
 pub const MAX_GAS: u64 = 50_000_000;
 
@@ -56,6 +63,8 @@ mod tests {
             assert!(ADDRESS_SIZE == 32);
             assert!(VALIDATOR_ID_SIZE == 48);
             assert!(MAX_TX_BYTES < MAX_BLOCK_BYTES);
+            assert!(MEMPOOL_MAX_TXS > 0);
+            assert!(MIN_TX_FEE > 0);
             assert!(MAX_GAS > 0);
             assert!(GAS_TRANSFER > 0);
             assert!(GAS_TRANSFER < MAX_GAS);

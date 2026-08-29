@@ -7,4 +7,6 @@ license.workspace = true
 [dependencies]
 types = { path = "../types" }
 crypto = { path = "../crypto" }
+execution = { path = "../execution" }
+state = { path = "../state" }
 thiserror.workspace = true

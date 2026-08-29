@@ -14,3 +14,9 @@ rocksdb = ["dep:rocksdb"]
 types = { path = "../types" }
 thiserror.workspace = true
 rocksdb = { version = "0.22", optional = true }
+
+[dev-dependencies]
+crypto = { path = "../crypto" }
+execution = { path = "../execution" }
+mempool = { path = "../mempool" }
+hex.workspace = true
