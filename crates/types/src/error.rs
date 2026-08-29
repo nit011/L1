@@ -17,6 +17,9 @@ pub enum TypesError {
     /// Fixed-size type received the wrong number of bytes.
     #[error("expected {expected} bytes, got {actual}")]
     BadLength { expected: usize, actual: usize },
+    /// Key-value store failure (used by `kv.trait` in Tier 1).
+    #[error("kv store: {0}")]
+    Kv(&'static str),
 }
 
 #[cfg(test)]

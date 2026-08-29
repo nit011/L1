@@ -4,7 +4,13 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+default = []
+# Native RocksDB. Off by default so environments without librocksdb still build.
+# Enable with `--features rocksdb`.
+rocksdb = ["dep:rocksdb"]
+
 [dependencies]
 types = { path = "../types" }
-state = { path = "../state" }
 thiserror.workspace = true
+rocksdb = { version = "0.22", optional = true }

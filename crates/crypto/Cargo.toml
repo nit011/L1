@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 thiserror.workspace = true
+types = { path = "../types" }
 blake3.workspace = true
 ed25519-dalek.workspace = true
 blst.workspace = true

@@ -17,6 +17,10 @@ pub enum DomainTag {
     Vrf,
     /// Merkle Patricia trie node.
     MptNode,
+    /// Generic Merkle tree (tx/receipt roots, two-leaf state-root combine).
+    /// Additive in Tier 1 so generic `merkle.compute_root` is domain-separated
+    /// without overloading `MptNode`.
+    Merkle,
 }
 
 impl DomainTag {
@@ -28,6 +32,7 @@ impl DomainTag {
             Self::Vote => b"vote",
             Self::Vrf => b"vrf",
             Self::MptNode => b"mpt-node",
+            Self::Merkle => b"merkle",
         }
     }
 }
@@ -59,6 +64,7 @@ mod tests {
             DomainTag::Vote,
             DomainTag::Vrf,
             DomainTag::MptNode,
+            DomainTag::Merkle,
         ]
         .into_iter()
         .map(|t| hash_to_array(&apply(t, msg)))
