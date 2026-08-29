@@ -27,6 +27,21 @@ pub const EPOCH_LENGTH: u64 = 100;
 /// PLACEHOLDER: unbonding period in heights. Finalized with staking (Tier 6 / 9).
 pub const UNBONDING_PERIOD: u64 = 1000;
 
+/// Propose-step timeout at round 0, in milliseconds ([`crate::Clock::now_millis`] units).
+pub const TIMEOUT_PROPOSE_MS: u64 = 3_000;
+
+/// Prevote-step timeout at round 0, in milliseconds.
+pub const TIMEOUT_PREVOTE_MS: u64 = 1_000;
+
+/// Precommit-step timeout at round 0, in milliseconds.
+pub const TIMEOUT_PRECOMMIT_MS: u64 = 1_000;
+
+/// Additive extra milliseconds per consensus round (Tendermint-style).
+pub const TIMEOUT_DELTA_MS: u64 = 500;
+
+/// Maximum header timestamp drift ahead of local time, in milliseconds.
+pub const MAX_TIMESTAMP_DRIFT_MS: u64 = 15_000;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -47,6 +62,9 @@ mod tests {
         const {
             assert!(EPOCH_LENGTH > 0);
             assert!(UNBONDING_PERIOD > EPOCH_LENGTH);
+            assert!(TIMEOUT_PROPOSE_MS > 0);
+            assert!(TIMEOUT_DELTA_MS > 0);
+            assert!(MAX_TIMESTAMP_DRIFT_MS > 0);
         }
     }
 }

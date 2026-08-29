@@ -5,7 +5,10 @@
 //! unbonding period are PLACEHOLDER until staking (Tier 6 / 9).
 
 use crate::collections::Map;
-use crate::spec::{EPOCH_LENGTH, MAX_BLOCK_BYTES, MAX_GAS, MAX_TX_BYTES, UNBONDING_PERIOD};
+use crate::spec::{
+    EPOCH_LENGTH, MAX_BLOCK_BYTES, MAX_GAS, MAX_TIMESTAMP_DRIFT_MS, MAX_TX_BYTES, TIMEOUT_DELTA_MS,
+    TIMEOUT_PRECOMMIT_MS, TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS, UNBONDING_PERIOD,
+};
 
 /// Named chain parameter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -20,6 +23,16 @@ pub enum ParamId {
     EpochLength,
     /// PLACEHOLDER unbonding period (heights).
     UnbondingPeriod,
+    /// Propose timeout at round 0 (ms).
+    TimeoutProposeMs,
+    /// Prevote timeout at round 0 (ms).
+    TimeoutPrevoteMs,
+    /// Precommit timeout at round 0 (ms).
+    TimeoutPrecommitMs,
+    /// Extra timeout per round (ms).
+    TimeoutDeltaMs,
+    /// Max header timestamp drift vs local clock (ms).
+    MaxTimestampDriftMs,
 }
 
 /// Mutable parameter map. Uses [`crate::collections::Map`] so iteration is ordered.
@@ -43,6 +56,11 @@ impl ParamsRegistry {
         values.insert(ParamId::MaxGas, MAX_GAS);
         values.insert(ParamId::EpochLength, EPOCH_LENGTH);
         values.insert(ParamId::UnbondingPeriod, UNBONDING_PERIOD);
+        values.insert(ParamId::TimeoutProposeMs, TIMEOUT_PROPOSE_MS);
+        values.insert(ParamId::TimeoutPrevoteMs, TIMEOUT_PREVOTE_MS);
+        values.insert(ParamId::TimeoutPrecommitMs, TIMEOUT_PRECOMMIT_MS);
+        values.insert(ParamId::TimeoutDeltaMs, TIMEOUT_DELTA_MS);
+        values.insert(ParamId::MaxTimestampDriftMs, MAX_TIMESTAMP_DRIFT_MS);
         Self { values }
     }
 

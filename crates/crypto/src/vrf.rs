@@ -155,6 +155,12 @@ pub fn verify(pk_bytes: &[u8; 32], alpha: &[u8], proof: &Proof) -> Result<Output
     Ok(proof_to_hash(&gamma))
 }
 
+/// Edwards public key for `seed` (same expansion as [`prove`]).
+pub fn public_key_from_seed(seed: &[u8; 32]) -> [u8; 32] {
+    let (x, _) = expand_sk(seed);
+    encode_point(&(ED25519_BASEPOINT_POINT * x))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

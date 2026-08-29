@@ -31,9 +31,12 @@ pub use error::TypesError;
 pub use hash::Hash;
 pub use height::Height;
 pub use nonce::Nonce;
-pub use params::ParamsRegistry;
+pub use params::{ParamId, ParamsRegistry};
 pub use round::Round;
-pub use spec::{ADDRESS_SIZE, HASH_SIZE, MAX_BLOCK_BYTES, MAX_GAS, MAX_TX_BYTES};
+pub use spec::{
+    ADDRESS_SIZE, HASH_SIZE, MAX_BLOCK_BYTES, MAX_GAS, MAX_TIMESTAMP_DRIFT_MS, MAX_TX_BYTES,
+    TIMEOUT_DELTA_MS, TIMEOUT_PRECOMMIT_MS, TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS,
+};
 pub use validator::{ValidatorId, VotingPower};
 
 #[cfg(test)]
