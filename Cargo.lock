@@ -2153,12 +2153,14 @@ dependencies = [
 name = "node"
 version = "0.1.0"
 dependencies = [
+ "blst",
  "consensus",
  "crypto",
  "execution",
+ "hex",
+ "libp2p",
  "mempool",
  "network",
- "rpc",
  "state",
  "storage",
  "thiserror 2.0.20",

@@ -1,15 +1,5 @@
-   0.143953458s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: stale: changed "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs"
-   0.143988583s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:           (vs) "/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-dc4bbc1a74ae9650/dep-lib-network"
-   0.143991166s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1787993389, nanos: 414733027 } < FileTime { seconds: 1787993572, nanos: 651869461 }
-   0.144399875s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: fingerprint dirty for network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("network", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", Edition2021) }
-   0.144427000s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-dc4bbc1a74ae9650/dep-lib-network", reference_mtime: FileTime { seconds: 1787993389, nanos: 414733027 }, stale: "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", stale_mtime: FileTime { seconds: 1787993572, nanos: 651869461 } }))
-   0.167907333s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: stale: changed "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs"
-   0.167913958s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:           (vs) "/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-95e86546e4a5658d/dep-test-lib-network"
-   0.167915333s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1787993389, nanos: 414597654 } < FileTime { seconds: 1787993572, nanos: 651869461 }
-   0.168066291s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: fingerprint dirty for network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("network", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", Edition2021) }
-   0.168071833s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-95e86546e4a5658d/dep-test-lib-network", reference_mtime: FileTime { seconds: 1787993389, nanos: 414597654 }, stale: "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", stale_mtime: FileTime { seconds: 1787993572, nanos: 651869461 } }))
-   0.168665750s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="multinode"}: cargo::core::compiler::fingerprint: fingerprint error for network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)/Check { test: true }/TargetInner { kind: "test", name: "multinode", benched: false, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/network/tests/multinode.rs", Edition2021) }
-   0.168669833s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="multinode"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-8042f499ec40f577/test-integration-test-multinode`
+   0.097165000s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="finality"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { kind: "test", name: "finality", benched: false, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/tests/finality.rs", Edition2021) }
+   0.097184292s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="finality"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-33108cdc281bdfe7/test-integration-test-finality`
 
 Caused by:
     No such file or directory (os error 2)
@@ -32,11 +22,29 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.186232833s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: fingerprint dirty for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: false }/TargetInner { name: "node", doc: true, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/src/main.rs", Edition2021) }
-   0.186245333s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "network" })
-   0.187539541s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: fingerprint dirty for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { name: "node", doc: true, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/src/main.rs", Edition2021) }
-   0.187545041s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "network" })
-    Checking network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)
-error: could not compile `network` (lib) due to 8 previous errors; 3 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `network` (lib test) due to 8 previous errors; 3 warnings emitted
+   0.099859208s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="simnet"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { kind: "test", name: "simnet", benched: false, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/tests/simnet.rs", Edition2021) }
+   0.099865458s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="simnet"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-8a06c78554cadb44/test-integration-test-simnet`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s

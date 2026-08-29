@@ -44,4 +44,15 @@ impl Mempool {
             .insert(signed.tx.nonce, signed);
         Ok(())
     }
+
+    /// Enqueue a tx that already passed `gossip.tx` / `mempool.verify`.
+    ///
+    /// Does **not** call `verify` again (`node.wire.mempool`). Still uses the
+    /// same `queued` map that `mempool.fee_order` (`take_ready`) reads.
+    pub fn admit_preverified(&mut self, signed: SignedTx, addr: types::Address) {
+        self.queued
+            .entry(addr)
+            .or_default()
+            .insert(signed.tx.nonce, signed);
+    }
 }

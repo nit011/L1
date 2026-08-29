@@ -17,8 +17,22 @@ execution = { path = "../execution" }
 mempool = { path = "../mempool" }
 consensus = { path = "../consensus" }
 network = { path = "../network" }
-rpc = { path = "../rpc" }
 tokio.workspace = true
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror.workspace = true
+libp2p.workspace = true
+blst = "0.3"
+hex.workspace = true
+
+[dev-dependencies]
+types = { path = "../types" }
+crypto = { path = "../crypto" }
+state = { path = "../state" }
+storage = { path = "../storage" }
+mempool = { path = "../mempool" }
+consensus = { path = "../consensus" }
+network = { path = "../network" }
+libp2p.workspace = true
+tokio.workspace = true
+blst = "0.3"
