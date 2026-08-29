@@ -9,3 +9,7 @@ types = { path = "../types" }
 state = { path = "../state" }
 crypto = { path = "../crypto" }
 thiserror.workspace = true
+consensus = { path = "../consensus" }
+
+[dev-dependencies]
+hex.workspace = true

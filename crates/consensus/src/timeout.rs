@@ -59,6 +59,26 @@ impl TimeoutConfig {
         }
     }
 
+    /// Propose timeout at round 0 (ms).
+    pub fn propose_ms(&self) -> u64 {
+        self.propose_ms
+    }
+
+    /// Prevote timeout at round 0 (ms).
+    pub fn prevote_ms(&self) -> u64 {
+        self.prevote_ms
+    }
+
+    /// Precommit timeout at round 0 (ms).
+    pub fn precommit_ms(&self) -> u64 {
+        self.precommit_ms
+    }
+
+    /// Per-round additive delta (ms).
+    pub fn delta_ms(&self) -> u64 {
+        self.delta_ms
+    }
+
     /// Duration for `step` at `round`: `base + round * delta`.
     pub fn duration_ms(&self, step: TimeoutStep, round: Round) -> u64 {
         let base = match step {

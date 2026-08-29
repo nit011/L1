@@ -56,6 +56,15 @@ impl Account {
             code_hash: Hash::from_bytes(ch),
         })
     }
+
+    /// Build from genesis allocation fields (same struct layout).
+    pub fn from_genesis(g: &types::genesis::GenesisAccount) -> Self {
+        Self {
+            balance: g.balance,
+            nonce: g.nonce,
+            code_hash: g.code_hash,
+        }
+    }
 }
 
 /// Address used as the accounts-trie key (raw 32 bytes).

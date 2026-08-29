@@ -21,6 +21,9 @@ pub const MAX_TX_BYTES: u32 = 64 * 1024;
 /// Maximum gas per block.
 pub const MAX_GAS: u64 = 50_000_000;
 
+/// Intrinsic gas for a native transfer (architecture.md §3 metering).
+pub const GAS_TRANSFER: u64 = 21_000;
+
 /// PLACEHOLDER: epoch length in heights. Finalized with staking (Tier 6 / 9).
 pub const EPOCH_LENGTH: u64 = 100;
 
@@ -54,6 +57,8 @@ mod tests {
             assert!(VALIDATOR_ID_SIZE == 48);
             assert!(MAX_TX_BYTES < MAX_BLOCK_BYTES);
             assert!(MAX_GAS > 0);
+            assert!(GAS_TRANSFER > 0);
+            assert!(GAS_TRANSFER < MAX_GAS);
         }
     }
 

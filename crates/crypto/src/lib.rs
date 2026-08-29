@@ -8,6 +8,7 @@ pub mod domain;
 pub mod hash;
 pub mod kzg;
 pub mod sig;
+pub mod tx;
 pub mod validator;
 pub mod vrf;
 

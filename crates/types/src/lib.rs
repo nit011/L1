@@ -6,18 +6,23 @@
 
 pub mod address;
 pub mod amount;
+pub mod block;
 pub mod chain_id;
 pub mod clock;
 pub mod collections;
 pub mod encoding;
 pub mod epoch;
 pub mod error;
+pub mod genesis;
 pub mod hash;
+pub mod hashing;
+pub mod header;
 pub mod height;
 pub mod nonce;
 pub mod params;
 pub mod round;
 pub mod spec;
+pub mod tx;
 pub mod validator;
 
 pub use address::Address;
@@ -34,8 +39,8 @@ pub use nonce::Nonce;
 pub use params::{ParamId, ParamsRegistry};
 pub use round::Round;
 pub use spec::{
-    ADDRESS_SIZE, HASH_SIZE, MAX_BLOCK_BYTES, MAX_GAS, MAX_TIMESTAMP_DRIFT_MS, MAX_TX_BYTES,
-    TIMEOUT_DELTA_MS, TIMEOUT_PRECOMMIT_MS, TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS,
+    ADDRESS_SIZE, GAS_TRANSFER, HASH_SIZE, MAX_BLOCK_BYTES, MAX_GAS, MAX_TIMESTAMP_DRIFT_MS,
+    MAX_TX_BYTES, TIMEOUT_DELTA_MS, TIMEOUT_PRECOMMIT_MS, TIMEOUT_PREVOTE_MS, TIMEOUT_PROPOSE_MS,
 };
 pub use validator::{ValidatorId, VotingPower};
 

@@ -1,17 +1,12 @@
 //! Block header timestamp bounds (development-plan.md §1; architecture.md §2.4).
 //!
-//! A manipulable timestamp is a grinding surface if it ever seeds leader
-//! election. VRF seeds must not use this value; this check still rejects
-//! timestamps that go backwards or lie too far in the future of the injected clock.
+//! Implementation is [`types::header::timestamp_in_bounds`] so header construction
+//! and consensus share one function.
 
+use types::header::timestamp_in_bounds as bounds;
 use types::{Clock, Height};
 
 /// Whether `proposed_ms` is valid for `height` given the previous header time.
-///
-/// Rules (unix milliseconds, same unit as [`Clock::now_millis`]):
-/// - `proposed_ms` must not be strictly before `prev_timestamp_ms` (except genesis,
-///   where there is no previous block and `prev_timestamp_ms` is ignored).
-/// - `proposed_ms` must not exceed `clock.now_millis() + max_drift_ms`.
 ///
 /// Contract: `header.timestamp.bounds`.
 pub fn timestamp_in_bounds<C: Clock>(
@@ -21,12 +16,7 @@ pub fn timestamp_in_bounds<C: Clock>(
     proposed_ms: u64,
     max_drift_ms: u64,
 ) -> bool {
-    if height != Height::GENESIS && proposed_ms < prev_timestamp_ms {
-        return false;
-    }
-    let now = clock.now_millis();
-    let max_future = now.saturating_add(max_drift_ms);
-    proposed_ms <= max_future
+    bounds(clock, height, prev_timestamp_ms, proposed_ms, max_drift_ms)
 }
 
 #[cfg(test)]
