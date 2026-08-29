@@ -5,10 +5,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MATCHES="$(grep -RIn --include='*.rs' -E '\b(HashMap|HashSet)\b' \
   "$ROOT/crates/state" "$ROOT/crates/execution" "$ROOT/crates/consensus" \
-  "$ROOT/crates/mempool" "$ROOT/crates/storage" || true)"
+  "$ROOT/crates/mempool" "$ROOT/crates/storage" "$ROOT/crates/network" || true)"
 if [[ -n "$MATCHES" ]]; then
   echo "$MATCHES"
-  echo "HashMap/HashSet are forbidden in crates/state, crates/execution, crates/consensus, crates/mempool, crates/storage."
+  echo "HashMap/HashSet are forbidden in crates/state, crates/execution, crates/consensus, crates/mempool, crates/storage, crates/network."
   exit 1
 fi
-echo "ok: no HashMap/HashSet in state/execution/consensus/mempool/storage"
+echo "ok: no HashMap/HashSet in state/execution/consensus/mempool/storage/network"

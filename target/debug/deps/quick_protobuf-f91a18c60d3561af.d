@@ -1,0 +1,10 @@
+/Users/nitishkumar/Downloads/L1/target/debug/deps/quick_protobuf-f91a18c60d3561af.d: /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/lib.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/errors.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/message.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/reader.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/sizeofs.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/writer.rs
+
+/Users/nitishkumar/Downloads/L1/target/debug/deps/libquick_protobuf-f91a18c60d3561af.rmeta: /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/lib.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/errors.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/message.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/reader.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/sizeofs.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/writer.rs
+
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/lib.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/errors.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/message.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/reader.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/sizeofs.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quick-protobuf-0.8.1/src/writer.rs:

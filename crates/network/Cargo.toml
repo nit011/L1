@@ -6,7 +6,16 @@ license.workspace = true
 
 [dependencies]
 types = { path = "../types" }
+crypto = { path = "../crypto" }
 consensus = { path = "../consensus" }
+mempool = { path = "../mempool" }
+storage = { path = "../storage" }
+state = { path = "../state" }
 tokio.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
+libp2p.workspace = true
+blst = "0.3"
+
+[dev-dependencies]
+hex.workspace = true
