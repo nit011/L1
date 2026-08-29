@@ -7,4 +7,11 @@ license.workspace = true
 [dependencies]
 types = { path = "../types" }
 crypto = { path = "../crypto" }
+storage = { path = "../storage" }
 thiserror.workspace = true
+blst = "0.3"
+
+[dev-dependencies]
+execution = { path = "../execution" }
+mempool = { path = "../mempool" }
+hex.workspace = true

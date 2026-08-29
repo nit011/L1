@@ -55,6 +55,12 @@ impl Clock for TestClock {
     }
 }
 
+impl Clock for &TestClock {
+    fn now_millis(&self) -> u64 {
+        (*self).now_millis()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
