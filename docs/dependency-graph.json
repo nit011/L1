@@ -1,0 +1,2636 @@
+{
+  "version": "1.1",
+  "project": "L1",
+  "language": "Rust",
+  "total_contracts": 267,
+  "independent_contracts": 38,
+  "cargo_workspace": "l1",
+  "rust_edition": "2021",
+  "tiers": {
+    "tier_0": {
+      "name": "Foundation Primitives",
+      "description": "Zero dependencies - can start immediately",
+      "rust_crate": "crates/types, crates/crypto",
+      "contracts": [
+        {
+          "id": "hash.blake3",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/hash/blake3.rs"
+        },
+        {
+          "id": "encoding.canonical.encode",
+          "dependencies": [],
+          "rust_file": "crates/types/src/encoding.rs"
+        },
+        {
+          "id": "encoding.canonical.decode",
+          "dependencies": [],
+          "rust_file": "crates/types/src/encoding.rs"
+        },
+        {
+          "id": "domain.tag.apply",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/domain.rs"
+        },
+        {
+          "id": "ed25519.sign",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/ed25519.rs"
+        },
+        {
+          "id": "ed25519.verify",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/ed25519.rs"
+        },
+        {
+          "id": "ed25519.keygen",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/ed25519.rs"
+        },
+        {
+          "id": "bls.keygen",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "bls.sign",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "bls.verify",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "bls.aggregate",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "bls.verifyAggregate",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "bls.domain",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/sig/bls.rs"
+        },
+        {
+          "id": "vrf.ecvrf.prove",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/vrf.rs"
+        },
+        {
+          "id": "vrf.ecvrf.verify",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/vrf.rs"
+        },
+        {
+          "id": "reed_solomon.encode",
+          "dependencies": [],
+          "rust_file": "crates/da/src/rs.rs"
+        },
+        {
+          "id": "reed_solomon.decode",
+          "dependencies": [],
+          "rust_file": "crates/da/src/rs.rs"
+        },
+        {
+          "id": "kzg.setup",
+          "dependencies": [],
+          "rust_file": "crates/crypto/src/kzg.rs"
+        },
+        {
+          "id": "clock.injected",
+          "dependencies": [],
+          "rust_file": "crates/types/src/clock.rs"
+        },
+        {
+          "id": "spec.constants",
+          "dependencies": [],
+          "rust_file": "crates/types/src/spec.rs"
+        },
+        {
+          "id": "spec.params_registry",
+          "dependencies": [],
+          "rust_file": "crates/types/src/params.rs"
+        },
+        {
+          "id": "types.hash",
+          "dependencies": [],
+          "rust_file": "crates/types/src/hash.rs"
+        },
+        {
+          "id": "types.address",
+          "dependencies": [],
+          "rust_file": "crates/types/src/address.rs"
+        },
+        {
+          "id": "types.amount",
+          "dependencies": [],
+          "rust_file": "crates/types/src/amount.rs"
+        },
+        {
+          "id": "types.nonce",
+          "dependencies": [],
+          "rust_file": "crates/types/src/nonce.rs"
+        },
+        {
+          "id": "types.height",
+          "dependencies": [],
+          "rust_file": "crates/types/src/height.rs"
+        },
+        {
+          "id": "types.round",
+          "dependencies": [],
+          "rust_file": "crates/types/src/round.rs"
+        },
+        {
+          "id": "types.epoch",
+          "dependencies": [],
+          "rust_file": "crates/types/src/epoch.rs"
+        },
+        {
+          "id": "types.chain_id",
+          "dependencies": [],
+          "rust_file": "crates/types/src/chain_id.rs"
+        },
+        {
+          "id": "types.validator_id",
+          "dependencies": [],
+          "rust_file": "crates/types/src/validator.rs"
+        },
+        {
+          "id": "types.voting_power",
+          "dependencies": [],
+          "rust_file": "crates/types/src/validator.rs"
+        },
+        {
+          "id": "error.core",
+          "dependencies": [],
+          "rust_file": "crates/types/src/error.rs"
+        },
+        {
+          "id": "tooling.rust_toolchain",
+          "dependencies": [],
+          "rust_file": "rust-toolchain.toml"
+        },
+        {
+          "id": "tooling.clippy_ci",
+          "dependencies": [],
+          "rust_file": ".github/workflows/ci.yml"
+        },
+        {
+          "id": "determinism.sorted_maps",
+          "dependencies": [],
+          "rust_file": "crates/types/src/collections.rs"
+        },
+        {
+          "id": "tracing.conventions",
+          "dependencies": [],
+          "rust_file": "crates/node/src/tracing.rs"
+        }
+      ]
+    },
+    "tier_1": {
+      "name": "Core Data Structures",
+      "description": "Depends only on Tier 0",
+      "rust_crate": "crates/state, crates/storage",
+      "contracts": [
+        {
+          "id": "merkle.compute_root",
+          "dependencies": [
+            "hash.blake3"
+          ],
+          "rust_file": "crates/state/src/merkle.rs"
+        },
+        {
+          "id": "merkle.verify",
+          "dependencies": [
+            "hash.blake3"
+          ],
+          "rust_file": "crates/state/src/merkle.rs"
+        },
+        {
+          "id": "mpt.pathencoding",
+          "dependencies": [
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/state/src/mpt/path.rs"
+        },
+        {
+          "id": "mpt.node.leaf",
+          "dependencies": [
+            "hash.blake3",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/state/src/mpt/node.rs"
+        },
+        {
+          "id": "mpt.node.extension",
+          "dependencies": [
+            "hash.blake3",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/state/src/mpt/node.rs"
+        },
+        {
+          "id": "mpt.node.branch",
+          "dependencies": [
+            "hash.blake3",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/state/src/mpt/node.rs"
+        },
+        {
+          "id": "mpt.get",
+          "dependencies": [
+            "hash.blake3",
+            "mpt.node.leaf",
+            "mpt.node.branch",
+            "mpt.pathencoding"
+          ],
+          "rust_file": "crates/state/src/mpt/mod.rs"
+        },
+        {
+          "id": "mpt.put",
+          "dependencies": [
+            "hash.blake3",
+            "encoding.canonical.encode",
+            "mpt.node.leaf",
+            "mpt.node.extension",
+            "mpt.node.branch"
+          ],
+          "rust_file": "crates/state/src/mpt/mod.rs"
+        },
+        {
+          "id": "mpt.delete",
+          "dependencies": [
+            "mpt.put",
+            "mpt.get"
+          ],
+          "rust_file": "crates/state/src/mpt/mod.rs"
+        },
+        {
+          "id": "mpt.prove",
+          "dependencies": [
+            "hash.blake3",
+            "mpt.get",
+            "merkle.compute_root"
+          ],
+          "rust_file": "crates/state/src/mpt/proof.rs"
+        },
+        {
+          "id": "mpt.verify",
+          "dependencies": [
+            "hash.blake3",
+            "merkle.verify",
+            "mpt.prove"
+          ],
+          "rust_file": "crates/state/src/mpt/proof.rs"
+        },
+        {
+          "id": "mpt.prove_exclusion",
+          "dependencies": [
+            "mpt.prove"
+          ],
+          "rust_file": "crates/state/src/mpt/proof.rs"
+        },
+        {
+          "id": "kv.trait",
+          "dependencies": [
+            "error.core"
+          ],
+          "rust_file": "crates/storage/src/kv.rs"
+        },
+        {
+          "id": "kv.memory",
+          "dependencies": [
+            "kv.trait"
+          ],
+          "rust_file": "crates/storage/src/memory.rs"
+        },
+        {
+          "id": "kv.rocksdb",
+          "dependencies": [
+            "kv.trait"
+          ],
+          "rust_file": "crates/storage/src/rocks.rs"
+        },
+        {
+          "id": "kv.batch",
+          "dependencies": [
+            "kv.trait"
+          ],
+          "rust_file": "crates/storage/src/kv.rs"
+        },
+        {
+          "id": "state.account",
+          "dependencies": [
+            "types.address",
+            "types.amount",
+            "types.nonce",
+            "types.hash"
+          ],
+          "rust_file": "crates/state/src/account.rs"
+        },
+        {
+          "id": "state.account_trie",
+          "dependencies": [
+            "mpt.put",
+            "mpt.get",
+            "state.account"
+          ],
+          "rust_file": "crates/state/src/tries.rs"
+        },
+        {
+          "id": "state.contract_storage_trie",
+          "dependencies": [
+            "mpt.put",
+            "mpt.get"
+          ],
+          "rust_file": "crates/state/src/tries.rs"
+        },
+        {
+          "id": "state.versioned_slot.read",
+          "dependencies": [
+            "kv.trait"
+          ],
+          "rust_file": "crates/state/src/version.rs"
+        },
+        {
+          "id": "state.versioned_slot.write",
+          "dependencies": [
+            "state.versioned_slot.read"
+          ],
+          "rust_file": "crates/state/src/version.rs"
+        },
+        {
+          "id": "state.versioned_slot.validate",
+          "dependencies": [
+            "state.versioned_slot.write"
+          ],
+          "rust_file": "crates/state/src/version.rs"
+        },
+        {
+          "id": "state.commit_root",
+          "dependencies": [
+            "state.account_trie",
+            "state.contract_storage_trie"
+          ],
+          "rust_file": "crates/state/src/root.rs"
+        },
+        {
+          "id": "kzg.commit",
+          "dependencies": [
+            "kzg.setup"
+          ],
+          "rust_file": "crates/crypto/src/kzg.rs"
+        },
+        {
+          "id": "kzg.open",
+          "dependencies": [
+            "kzg.commit"
+          ],
+          "rust_file": "crates/crypto/src/kzg.rs"
+        },
+        {
+          "id": "kzg.verify",
+          "dependencies": [
+            "kzg.commit",
+            "kzg.open"
+          ],
+          "rust_file": "crates/crypto/src/kzg.rs"
+        },
+        {
+          "id": "address.from_ed25519",
+          "dependencies": [
+            "ed25519.keygen",
+            "hash.blake3",
+            "types.address"
+          ],
+          "rust_file": "crates/crypto/src/address.rs"
+        },
+        {
+          "id": "validator.from_bls",
+          "dependencies": [
+            "bls.keygen",
+            "types.validator_id"
+          ],
+          "rust_file": "crates/crypto/src/validator.rs"
+        }
+      ]
+    },
+    "tier_2": {
+      "name": "Consensus Time & Randomness",
+      "description": "Injected clock, timeouts, VRF seed and weighted leader lottery",
+      "rust_crate": "crates/consensus",
+      "contracts": [
+        {
+          "id": "cons.timeout.config",
+          "dependencies": [
+            "spec.constants",
+            "clock.injected"
+          ],
+          "rust_file": "crates/consensus/src/timeout.rs"
+        },
+        {
+          "id": "cons.clock.bind",
+          "dependencies": [
+            "clock.injected",
+            "cons.timeout.config"
+          ],
+          "rust_file": "crates/consensus/src/timeout.rs"
+        },
+        {
+          "id": "header.timestamp.bounds",
+          "dependencies": [
+            "clock.injected",
+            "types.height"
+          ],
+          "rust_file": "crates/consensus/src/time.rs"
+        },
+        {
+          "id": "vrf.seed.derive",
+          "dependencies": [
+            "hash.blake3",
+            "domain.tag.apply",
+            "types.epoch"
+          ],
+          "rust_file": "crates/consensus/src/vrf.rs"
+        },
+        {
+          "id": "vrf.leader.prove",
+          "dependencies": [
+            "vrf.ecvrf.prove",
+            "vrf.seed.derive",
+            "types.validator_id"
+          ],
+          "rust_file": "crates/consensus/src/vrf.rs"
+        },
+        {
+          "id": "vrf.leader.verify",
+          "dependencies": [
+            "vrf.ecvrf.verify",
+            "vrf.seed.derive"
+          ],
+          "rust_file": "crates/consensus/src/vrf.rs"
+        },
+        {
+          "id": "vrf.leader.weighted",
+          "dependencies": [
+            "vrf.leader.verify",
+            "types.voting_power"
+          ],
+          "rust_file": "crates/consensus/src/vrf.rs"
+        },
+        {
+          "id": "cons.replay.vote",
+          "dependencies": [
+            "hash.blake3",
+            "domain.tag.apply",
+            "types.height",
+            "types.round"
+          ],
+          "rust_file": "crates/consensus/src/replay.rs"
+        },
+        {
+          "id": "cons.round_robin.testdouble",
+          "dependencies": [
+            "types.validator_id",
+            "types.round"
+          ],
+          "rust_file": "crates/consensus/src/leader.rs"
+        }
+      ]
+    },
+    "tier_3": {
+      "name": "Genesis, Transactions & Sequential Execution",
+      "description": "Canonical apply_block spec - STM/WASM/FHE must match these roots",
+      "rust_crate": "crates/execution, crates/types",
+      "contracts": [
+        {
+          "id": "genesis.alloc",
+          "dependencies": [
+            "state.account",
+            "types.chain_id"
+          ],
+          "rust_file": "crates/types/src/genesis.rs"
+        },
+        {
+          "id": "genesis.validators",
+          "dependencies": [
+            "validator.from_bls",
+            "types.voting_power"
+          ],
+          "rust_file": "crates/types/src/genesis.rs"
+        },
+        {
+          "id": "genesis.params",
+          "dependencies": [
+            "spec.params_registry",
+            "cons.timeout.config"
+          ],
+          "rust_file": "crates/types/src/genesis.rs"
+        },
+        {
+          "id": "genesis.hash",
+          "dependencies": [
+            "genesis.alloc",
+            "genesis.validators",
+            "genesis.params",
+            "hash.blake3"
+          ],
+          "rust_file": "crates/types/src/genesis.rs"
+        },
+        {
+          "id": "tx.envelope",
+          "dependencies": [
+            "types.chain_id",
+            "types.nonce",
+            "types.amount",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/types/src/tx.rs"
+        },
+        {
+          "id": "tx.transfer",
+          "dependencies": [
+            "tx.envelope",
+            "types.address"
+          ],
+          "rust_file": "crates/types/src/tx.rs"
+        },
+        {
+          "id": "tx.sign",
+          "dependencies": [
+            "ed25519.sign",
+            "tx.envelope",
+            "domain.tag.apply"
+          ],
+          "rust_file": "crates/crypto/src/tx.rs"
+        },
+        {
+          "id": "tx.verify_ed25519",
+          "dependencies": [
+            "ed25519.verify",
+            "tx.envelope",
+            "domain.tag.apply"
+          ],
+          "rust_file": "crates/crypto/src/tx.rs"
+        },
+        {
+          "id": "tx.nonce_check",
+          "dependencies": [
+            "tx.envelope",
+            "state.account"
+          ],
+          "rust_file": "crates/execution/src/checks.rs"
+        },
+        {
+          "id": "tx.balance_check",
+          "dependencies": [
+            "tx.transfer",
+            "state.account"
+          ],
+          "rust_file": "crates/execution/src/checks.rs"
+        },
+        {
+          "id": "tx.gas_meter",
+          "dependencies": [
+            "spec.constants",
+            "tx.envelope"
+          ],
+          "rust_file": "crates/execution/src/gas.rs"
+        },
+        {
+          "id": "tx.fee_priority",
+          "dependencies": [
+            "tx.envelope",
+            "tx.gas_meter"
+          ],
+          "rust_file": "crates/execution/src/fees.rs"
+        },
+        {
+          "id": "exec.seq.apply_tx",
+          "dependencies": [
+            "tx.verify_ed25519",
+            "tx.nonce_check",
+            "tx.balance_check",
+            "tx.gas_meter",
+            "state.account_trie"
+          ],
+          "rust_file": "crates/execution/src/seq.rs"
+        },
+        {
+          "id": "exec.receipt",
+          "dependencies": [
+            "exec.seq.apply_tx",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/execution/src/receipt.rs"
+        },
+        {
+          "id": "exec.events",
+          "dependencies": [
+            "exec.seq.apply_tx"
+          ],
+          "rust_file": "crates/execution/src/events.rs"
+        },
+        {
+          "id": "header.fields",
+          "dependencies": [
+            "types.height",
+            "types.round",
+            "types.validator_id",
+            "header.timestamp.bounds"
+          ],
+          "rust_file": "crates/types/src/header.rs"
+        },
+        {
+          "id": "block.tx_root",
+          "dependencies": [
+            "merkle.compute_root",
+            "tx.envelope"
+          ],
+          "rust_file": "crates/types/src/block.rs"
+        },
+        {
+          "id": "block.receipts_root",
+          "dependencies": [
+            "merkle.compute_root",
+            "exec.receipt"
+          ],
+          "rust_file": "crates/types/src/block.rs"
+        },
+        {
+          "id": "block.state_root",
+          "dependencies": [
+            "state.commit_root"
+          ],
+          "rust_file": "crates/types/src/block.rs"
+        },
+        {
+          "id": "block.validators_hash",
+          "dependencies": [
+            "merkle.compute_root",
+            "genesis.validators"
+          ],
+          "rust_file": "crates/types/src/header.rs"
+        },
+        {
+          "id": "block.da_root.placeholder",
+          "dependencies": [
+            "types.hash"
+          ],
+          "rust_file": "crates/types/src/header.rs"
+        },
+        {
+          "id": "header.hash",
+          "dependencies": [
+            "header.fields",
+            "block.tx_root",
+            "block.state_root",
+            "block.receipts_root",
+            "hash.blake3"
+          ],
+          "rust_file": "crates/types/src/header.rs"
+        },
+        {
+          "id": "block.body",
+          "dependencies": [
+            "tx.envelope",
+            "header.fields"
+          ],
+          "rust_file": "crates/types/src/block.rs"
+        },
+        {
+          "id": "exec.seq.apply_block",
+          "dependencies": [
+            "exec.seq.apply_tx",
+            "block.body",
+            "block.state_root",
+            "block.tx_root",
+            "block.receipts_root"
+          ],
+          "rust_file": "crates/execution/src/seq.rs"
+        },
+        {
+          "id": "exec.app_hash",
+          "dependencies": [
+            "exec.seq.apply_block",
+            "hash.blake3"
+          ],
+          "rust_file": "crates/execution/src/seq.rs"
+        },
+        {
+          "id": "exec.golden_vectors",
+          "dependencies": [
+            "exec.app_hash",
+            "genesis.hash"
+          ],
+          "rust_file": "crates/execution/tests/golden.rs"
+        }
+      ]
+    },
+    "tier_4": {
+      "name": "Chain Storage, WAL & Mempool",
+      "description": "Durable chain and local tx admission",
+      "rust_crate": "crates/storage, crates/mempool",
+      "contracts": [
+        {
+          "id": "store.header.put",
+          "dependencies": [
+            "kv.batch",
+            "header.hash"
+          ],
+          "rust_file": "crates/storage/src/blocks.rs"
+        },
+        {
+          "id": "store.block.put",
+          "dependencies": [
+            "store.header.put",
+            "block.body"
+          ],
+          "rust_file": "crates/storage/src/blocks.rs"
+        },
+        {
+          "id": "store.tx.by_hash",
+          "dependencies": [
+            "store.block.put",
+            "tx.envelope"
+          ],
+          "rust_file": "crates/storage/src/index.rs"
+        },
+        {
+          "id": "store.receipt.put",
+          "dependencies": [
+            "store.block.put",
+            "exec.receipt"
+          ],
+          "rust_file": "crates/storage/src/index.rs"
+        },
+        {
+          "id": "store.replay_from_genesis",
+          "dependencies": [
+            "store.block.put",
+            "exec.seq.apply_block",
+            "genesis.hash"
+          ],
+          "rust_file": "crates/storage/src/replay.rs"
+        },
+        {
+          "id": "wal.execution",
+          "dependencies": [
+            "kv.batch",
+            "exec.seq.apply_block"
+          ],
+          "rust_file": "crates/storage/src/wal.rs"
+        },
+        {
+          "id": "mempool.verify",
+          "dependencies": [
+            "tx.verify_ed25519",
+            "tx.nonce_check",
+            "tx.balance_check",
+            "tx.gas_meter"
+          ],
+          "rust_file": "crates/mempool/src/verify.rs"
+        },
+        {
+          "id": "mempool.nonce_queue",
+          "dependencies": [
+            "mempool.verify",
+            "types.nonce"
+          ],
+          "rust_file": "crates/mempool/src/queue.rs"
+        },
+        {
+          "id": "mempool.fee_order",
+          "dependencies": [
+            "mempool.nonce_queue",
+            "tx.fee_priority"
+          ],
+          "rust_file": "crates/mempool/src/order.rs"
+        },
+        {
+          "id": "mempool.rbf",
+          "dependencies": [
+            "mempool.fee_order"
+          ],
+          "rust_file": "crates/mempool/src/rbf.rs"
+        },
+        {
+          "id": "mempool.size_limits",
+          "dependencies": [
+            "spec.constants",
+            "mempool.verify"
+          ],
+          "rust_file": "crates/mempool/src/limits.rs"
+        },
+        {
+          "id": "mempool.min_fee",
+          "dependencies": [
+            "spec.params_registry",
+            "mempool.verify"
+          ],
+          "rust_file": "crates/mempool/src/fees.rs"
+        },
+        {
+          "id": "block.builder.local",
+          "dependencies": [
+            "mempool.fee_order",
+            "exec.seq.apply_block",
+            "genesis.params"
+          ],
+          "rust_file": "crates/execution/src/builder.rs"
+        }
+      ]
+    },
+    "tier_5": {
+      "name": "BFT Engine (In-Process)",
+      "description": "Tendermint propose/prevote/precommit/commit with static genesis validators",
+      "rust_crate": "crates/consensus",
+      "contracts": [
+        {
+          "id": "vote.prevote",
+          "dependencies": [
+            "bls.sign",
+            "bls.domain",
+            "header.hash",
+            "types.height",
+            "types.round"
+          ],
+          "rust_file": "crates/consensus/src/vote.rs"
+        },
+        {
+          "id": "vote.precommit",
+          "dependencies": [
+            "bls.sign",
+            "bls.domain",
+            "header.hash",
+            "types.height",
+            "types.round"
+          ],
+          "rust_file": "crates/consensus/src/vote.rs"
+        },
+        {
+          "id": "vote.nil",
+          "dependencies": [
+            "vote.prevote"
+          ],
+          "rust_file": "crates/consensus/src/vote.rs"
+        },
+        {
+          "id": "vote.verify",
+          "dependencies": [
+            "bls.verify",
+            "vote.prevote",
+            "cons.replay.vote"
+          ],
+          "rust_file": "crates/consensus/src/vote.rs"
+        },
+        {
+          "id": "qc.aggregate",
+          "dependencies": [
+            "bls.aggregate",
+            "vote.precommit",
+            "types.voting_power"
+          ],
+          "rust_file": "crates/consensus/src/qc.rs"
+        },
+        {
+          "id": "qc.verify",
+          "dependencies": [
+            "bls.verifyAggregate",
+            "qc.aggregate"
+          ],
+          "rust_file": "crates/consensus/src/qc.rs"
+        },
+        {
+          "id": "cons.propose",
+          "dependencies": [
+            "vrf.leader.weighted",
+            "block.builder.local",
+            "bls.sign"
+          ],
+          "rust_file": "crates/consensus/src/propose.rs"
+        },
+        {
+          "id": "cons.lock",
+          "dependencies": [
+            "vote.precommit",
+            "types.height",
+            "types.round"
+          ],
+          "rust_file": "crates/consensus/src/state.rs"
+        },
+        {
+          "id": "cons.round_change",
+          "dependencies": [
+            "cons.clock.bind",
+            "vote.nil"
+          ],
+          "rust_file": "crates/consensus/src/state.rs"
+        },
+        {
+          "id": "cons.prevote_step",
+          "dependencies": [
+            "cons.propose",
+            "vote.prevote",
+            "vote.verify"
+          ],
+          "rust_file": "crates/consensus/src/steps.rs"
+        },
+        {
+          "id": "cons.precommit_step",
+          "dependencies": [
+            "cons.prevote_step",
+            "vote.precommit"
+          ],
+          "rust_file": "crates/consensus/src/steps.rs"
+        },
+        {
+          "id": "cons.commit",
+          "dependencies": [
+            "cons.precommit_step",
+            "qc.verify",
+            "exec.app_hash"
+          ],
+          "rust_file": "crates/consensus/src/steps.rs"
+        },
+        {
+          "id": "cons.halt_no_quorum",
+          "dependencies": [
+            "cons.precommit_step",
+            "types.voting_power"
+          ],
+          "rust_file": "crates/consensus/src/safety.rs"
+        },
+        {
+          "id": "cons.safety.no_two_commits",
+          "dependencies": [
+            "cons.commit"
+          ],
+          "rust_file": "crates/consensus/src/safety.rs"
+        },
+        {
+          "id": "evidence.equivocation",
+          "dependencies": [
+            "vote.verify",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/consensus/src/evidence.rs"
+        },
+        {
+          "id": "wal.consensus",
+          "dependencies": [
+            "cons.propose",
+            "vote.prevote",
+            "kv.batch"
+          ],
+          "rust_file": "crates/consensus/src/wal.rs"
+        },
+        {
+          "id": "wal.no_double_sign",
+          "dependencies": [
+            "wal.consensus",
+            "evidence.equivocation"
+          ],
+          "rust_file": "crates/consensus/src/wal.rs"
+        },
+        {
+          "id": "simnet.in_process",
+          "dependencies": [
+            "cons.commit",
+            "genesis.validators",
+            "store.block.put"
+          ],
+          "rust_file": "crates/consensus/tests/simnet.rs"
+        }
+      ]
+    },
+    "tier_6": {
+      "name": "Networking & Gossip",
+      "description": "libp2p QUIC, discovery, gossipsub, eclipse/DoS minimums",
+      "rust_crate": "crates/network",
+      "contracts": [
+        {
+          "id": "p2p.identity",
+          "dependencies": [
+            "ed25519.keygen"
+          ],
+          "rust_file": "crates/network/src/identity.rs"
+        },
+        {
+          "id": "p2p.quic",
+          "dependencies": [
+            "p2p.identity"
+          ],
+          "rust_file": "crates/network/src/transport.rs"
+        },
+        {
+          "id": "p2p.kademlia",
+          "dependencies": [
+            "p2p.quic"
+          ],
+          "rust_file": "crates/network/src/discovery.rs"
+        },
+        {
+          "id": "p2p.bootstrap",
+          "dependencies": [
+            "p2p.kademlia"
+          ],
+          "rust_file": "crates/network/src/discovery.rs"
+        },
+        {
+          "id": "gossip.mesh",
+          "dependencies": [
+            "p2p.quic"
+          ],
+          "rust_file": "crates/network/src/gossip.rs"
+        },
+        {
+          "id": "gossip.scoring",
+          "dependencies": [
+            "gossip.mesh"
+          ],
+          "rust_file": "crates/network/src/scoring.rs"
+        },
+        {
+          "id": "gossip.schema",
+          "dependencies": [
+            "gossip.mesh",
+            "encoding.canonical.encode"
+          ],
+          "rust_file": "crates/network/src/codec.rs"
+        },
+        {
+          "id": "gossip.tx",
+          "dependencies": [
+            "gossip.mesh",
+            "mempool.verify"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "gossip.proposal",
+          "dependencies": [
+            "gossip.mesh",
+            "cons.propose"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "gossip.vote",
+          "dependencies": [
+            "gossip.mesh",
+            "vote.verify"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "gossip.block",
+          "dependencies": [
+            "gossip.mesh",
+            "header.hash",
+            "merkle.verify"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "gossip.evidence",
+          "dependencies": [
+            "gossip.mesh",
+            "evidence.equivocation"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "gossip.headers_first",
+          "dependencies": [
+            "gossip.block",
+            "store.header.put"
+          ],
+          "rust_file": "crates/network/src/blocks.rs"
+        },
+        {
+          "id": "mesh.validator",
+          "dependencies": [
+            "gossip.proposal",
+            "gossip.vote",
+            "genesis.validators"
+          ],
+          "rust_file": "crates/network/src/validator_mesh.rs"
+        },
+        {
+          "id": "netsec.peer_rate_limit",
+          "dependencies": [
+            "gossip.mesh",
+            "spec.constants"
+          ],
+          "rust_file": "crates/network/src/rate_limit.rs"
+        },
+        {
+          "id": "netsec.ip_slot_cap",
+          "dependencies": [
+            "p2p.kademlia"
+          ],
+          "rust_file": "crates/network/src/eclipse.rs"
+        },
+        {
+          "id": "sync.locator",
+          "dependencies": [
+            "header.hash",
+            "store.header.put"
+          ],
+          "rust_file": "crates/network/src/sync.rs"
+        },
+        {
+          "id": "sync.headers_then_bodies",
+          "dependencies": [
+            "sync.locator",
+            "gossip.headers_first",
+            "store.block.put"
+          ],
+          "rust_file": "crates/network/src/sync.rs"
+        },
+        {
+          "id": "valid.block.consensus",
+          "dependencies": [
+            "gossip.block",
+            "qc.verify"
+          ],
+          "rust_file": "crates/network/src/validation.rs"
+        },
+        {
+          "id": "valid.block.reorg_safety",
+          "dependencies": [
+            "valid.block.consensus",
+            "cons.safety.no_two_commits"
+          ],
+          "rust_file": "crates/network/src/validation.rs"
+        }
+      ]
+    },
+    "tier_7": {
+      "name": "Node Wiring (MVP Chain)",
+      "description": "Process event loop: mempool \u2194 exec \u2194 BFT \u2194 store \u2194 gossip. First multi-process chain.",
+      "rust_crate": "crates/node",
+      "contracts": [
+        {
+          "id": "node.config",
+          "dependencies": [
+            "genesis.params",
+            "p2p.bootstrap"
+          ],
+          "rust_file": "crates/node/src/config.rs"
+        },
+        {
+          "id": "node.wire.mempool",
+          "dependencies": [
+            "mempool.fee_order",
+            "gossip.tx"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        },
+        {
+          "id": "node.wire.propose",
+          "dependencies": [
+            "node.wire.mempool",
+            "cons.propose",
+            "gossip.proposal"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        },
+        {
+          "id": "node.wire.vote",
+          "dependencies": [
+            "cons.prevote_step",
+            "cons.precommit_step",
+            "gossip.vote",
+            "mesh.validator"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        },
+        {
+          "id": "node.wire.commit",
+          "dependencies": [
+            "cons.commit",
+            "store.block.put",
+            "wal.execution",
+            "gossip.block"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        },
+        {
+          "id": "node.wire.sync",
+          "dependencies": [
+            "sync.headers_then_bodies",
+            "node.wire.commit"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        },
+        {
+          "id": "node.catchup",
+          "dependencies": [
+            "node.wire.sync",
+            "store.replay_from_genesis"
+          ],
+          "rust_file": "crates/node/src/sync.rs"
+        },
+        {
+          "id": "node.simnet.multiprocess",
+          "dependencies": [
+            "node.wire.commit",
+            "node.config"
+          ],
+          "rust_file": "crates/node/tests/simnet.rs"
+        },
+        {
+          "id": "mvp.finality_lan",
+          "dependencies": [
+            "node.simnet.multiprocess",
+            "cons.commit"
+          ],
+          "rust_file": "crates/node/tests/finality.rs"
+        }
+      ]
+    },
+    "tier_8": {
+      "name": "JSON-RPC API Gateway",
+      "description": "Client submit tx and query state; JSON only at this boundary",
+      "rust_crate": "crates/rpc",
+      "client_method_scheme": "service.<namespace>.jsonrpc.<method> => <namespace>.<method>",
+      "client_api_notes": [
+        "Expose mpt.prove as l1_getProof alongside submit/query for light and SDK clients."
+      ],
+      "contracts": [
+        {
+          "id": "rpc.server",
+          "dependencies": [
+            "node.config"
+          ],
+          "rust_file": "crates/rpc/src/server.rs",
+          "description": "JSON-RPC HTTP/WS server"
+        },
+        {
+          "id": "service.l1.jsonrpc.submitTx",
+          "dependencies": [
+            "rpc.server",
+            "node.wire.mempool",
+            "netsec.peer_rate_limit"
+          ],
+          "rust_file": "crates/rpc/src/tx.rs",
+          "jsonrpc_method": "l1_submitTx",
+          "description": "Submit signed tx into mempool"
+        },
+        {
+          "id": "service.l1.jsonrpc.getTx",
+          "dependencies": [
+            "rpc.server",
+            "store.tx.by_hash"
+          ],
+          "rust_file": "crates/rpc/src/tx.rs",
+          "jsonrpc_method": "l1_getTransaction",
+          "description": "Get tx by hash"
+        },
+        {
+          "id": "service.l1.jsonrpc.getBlock",
+          "dependencies": [
+            "rpc.server",
+            "store.block.put"
+          ],
+          "rust_file": "crates/rpc/src/block.rs",
+          "jsonrpc_method": "l1_getBlock",
+          "description": "Get block by height or hash"
+        },
+        {
+          "id": "service.l1.jsonrpc.getAccount",
+          "dependencies": [
+            "rpc.server",
+            "state.account_trie"
+          ],
+          "rust_file": "crates/rpc/src/state.rs",
+          "jsonrpc_method": "l1_getAccount",
+          "description": "Get account balance/nonce"
+        },
+        {
+          "id": "service.l1.jsonrpc.getProof",
+          "dependencies": [
+            "rpc.server",
+            "mpt.prove",
+            "block.state_root"
+          ],
+          "rust_file": "crates/rpc/src/state.rs",
+          "jsonrpc_method": "l1_getProof",
+          "description": "Account/storage Merkle proof"
+        },
+        {
+          "id": "service.l1.jsonrpc.getStatus",
+          "dependencies": [
+            "rpc.server",
+            "cons.commit"
+          ],
+          "rust_file": "crates/rpc/src/status.rs",
+          "jsonrpc_method": "l1_getStatus",
+          "description": "Height, round, syncing, peer count"
+        },
+        {
+          "id": "service.l1.jsonrpc.subscribe",
+          "dependencies": [
+            "rpc.server",
+            "gossip.mesh"
+          ],
+          "rust_file": "crates/rpc/src/sub.rs",
+          "jsonrpc_method": "l1_subscribe",
+          "description": "Subscribe new heads / logs"
+        },
+        {
+          "id": "service.l1.jsonrpc.unsubscribe",
+          "dependencies": [
+            "service.l1.jsonrpc.subscribe"
+          ],
+          "rust_file": "crates/rpc/src/sub.rs",
+          "jsonrpc_method": "l1_unsubscribe",
+          "description": "Cancel subscription"
+        }
+      ]
+    },
+    "tier_9": {
+      "name": "Staking, Slashing & Weak Subjectivity",
+      "description": "Validator lifecycle, delegation caps, evidence execution, checkpoints",
+      "rust_crate": "crates/execution, crates/consensus",
+      "contracts": [
+        {
+          "id": "tx.stake.bond",
+          "dependencies": [
+            "tx.envelope",
+            "types.amount"
+          ],
+          "rust_file": "crates/types/src/staking.rs"
+        },
+        {
+          "id": "tx.stake.unbond",
+          "dependencies": [
+            "tx.stake.bond"
+          ],
+          "rust_file": "crates/types/src/staking.rs"
+        },
+        {
+          "id": "tx.stake.delegate",
+          "dependencies": [
+            "tx.stake.bond"
+          ],
+          "rust_file": "crates/types/src/staking.rs"
+        },
+        {
+          "id": "tx.stake.undelegate",
+          "dependencies": [
+            "tx.stake.delegate"
+          ],
+          "rust_file": "crates/types/src/staking.rs"
+        },
+        {
+          "id": "tx.stake.withdraw",
+          "dependencies": [
+            "tx.stake.unbond"
+          ],
+          "rust_file": "crates/types/src/staking.rs"
+        },
+        {
+          "id": "staking.min_self_bond",
+          "dependencies": [
+            "tx.stake.bond",
+            "spec.params_registry"
+          ],
+          "rust_file": "crates/execution/src/staking.rs"
+        },
+        {
+          "id": "staking.delegation_cap",
+          "dependencies": [
+            "tx.stake.delegate",
+            "spec.params_registry"
+          ],
+          "rust_file": "crates/execution/src/staking.rs"
+        },
+        {
+          "id": "staking.unbonding_period",
+          "dependencies": [
+            "tx.stake.unbond",
+            "types.epoch"
+          ],
+          "rust_file": "crates/execution/src/staking.rs"
+        },
+        {
+          "id": "staking.epoch_set_update",
+          "dependencies": [
+            "staking.min_self_bond",
+            "cons.commit",
+            "block.validators_hash"
+          ],
+          "rust_file": "crates/execution/src/staking.rs"
+        },
+        {
+          "id": "evidence.submission",
+          "dependencies": [
+            "evidence.equivocation",
+            "bls.verify"
+          ],
+          "rust_file": "crates/consensus/src/evidence.rs"
+        },
+        {
+          "id": "slash.apply",
+          "dependencies": [
+            "evidence.submission",
+            "staking.min_self_bond"
+          ],
+          "rust_file": "crates/execution/src/slash.rs"
+        },
+        {
+          "id": "slash.tombstone",
+          "dependencies": [
+            "slash.apply"
+          ],
+          "rust_file": "crates/execution/src/slash.rs"
+        },
+        {
+          "id": "ws.checkpoint",
+          "dependencies": [
+            "cons.commit",
+            "header.hash",
+            "spec.constants"
+          ],
+          "rust_file": "crates/consensus/src/checkpoint.rs"
+        },
+        {
+          "id": "ws.bootstrap",
+          "dependencies": [
+            "ws.checkpoint",
+            "node.catchup"
+          ],
+          "rust_file": "crates/node/src/ws.rs"
+        },
+        {
+          "id": "service.l1.jsonrpc.getCheckpoint",
+          "dependencies": [
+            "rpc.server",
+            "ws.checkpoint"
+          ],
+          "rust_file": "crates/rpc/src/status.rs",
+          "jsonrpc_method": "l1_getCheckpoint",
+          "description": "Latest weak-subjectivity checkpoint"
+        }
+      ]
+    },
+    "tier_10": {
+      "name": "Parallel Execution (Block-STM)",
+      "description": "Speculative RW sets; must equal sequential apply_block",
+      "rust_crate": "crates/execution",
+      "contracts": [
+        {
+          "id": "stm.rwset.speculate",
+          "dependencies": [
+            "exec.seq.apply_tx",
+            "state.versioned_slot.read"
+          ],
+          "rust_file": "crates/execution/src/stm/rwset.rs"
+        },
+        {
+          "id": "stm.conflict_graph",
+          "dependencies": [
+            "stm.rwset.speculate"
+          ],
+          "rust_file": "crates/execution/src/stm/graph.rs"
+        },
+        {
+          "id": "stm.schedule",
+          "dependencies": [
+            "stm.conflict_graph"
+          ],
+          "rust_file": "crates/execution/src/stm/schedule.rs"
+        },
+        {
+          "id": "stm.validate",
+          "dependencies": [
+            "stm.schedule",
+            "state.versioned_slot.validate"
+          ],
+          "rust_file": "crates/execution/src/stm/validate.rs"
+        },
+        {
+          "id": "stm.reexec_sequential",
+          "dependencies": [
+            "stm.validate",
+            "exec.seq.apply_tx"
+          ],
+          "rust_file": "crates/execution/src/stm/reexec.rs"
+        },
+        {
+          "id": "stm.apply_block",
+          "dependencies": [
+            "stm.reexec_sequential",
+            "exec.seq.apply_block"
+          ],
+          "rust_file": "crates/execution/src/stm/mod.rs"
+        },
+        {
+          "id": "stm.equals_seq",
+          "dependencies": [
+            "stm.apply_block",
+            "exec.golden_vectors"
+          ],
+          "rust_file": "crates/execution/tests/stm_equiv.rs"
+        },
+        {
+          "id": "stm.hot_account_bench",
+          "dependencies": [
+            "stm.apply_block"
+          ],
+          "rust_file": "crates/execution/benches/hot_account.rs"
+        }
+      ]
+    },
+    "tier_11": {
+      "name": "WASM Contracts VM",
+      "description": "Gas-metered WASM using contracts trie; sequential spec extended",
+      "rust_crate": "crates/execution",
+      "contracts": [
+        {
+          "id": "tx.deploy",
+          "dependencies": [
+            "tx.envelope"
+          ],
+          "rust_file": "crates/types/src/tx.rs"
+        },
+        {
+          "id": "tx.call",
+          "dependencies": [
+            "tx.envelope",
+            "types.address"
+          ],
+          "rust_file": "crates/types/src/tx.rs"
+        },
+        {
+          "id": "wasm.meter",
+          "dependencies": [
+            "tx.gas_meter"
+          ],
+          "rust_file": "crates/execution/src/wasm/gas.rs"
+        },
+        {
+          "id": "wasm.host.sload",
+          "dependencies": [
+            "state.contract_storage_trie",
+            "state.versioned_slot.read"
+          ],
+          "rust_file": "crates/execution/src/wasm/host.rs"
+        },
+        {
+          "id": "wasm.host.sstore",
+          "dependencies": [
+            "wasm.host.sload",
+            "state.versioned_slot.write"
+          ],
+          "rust_file": "crates/execution/src/wasm/host.rs"
+        },
+        {
+          "id": "wasm.deploy",
+          "dependencies": [
+            "tx.deploy",
+            "wasm.meter",
+            "state.account_trie"
+          ],
+          "rust_file": "crates/execution/src/wasm/deploy.rs"
+        },
+        {
+          "id": "wasm.call",
+          "dependencies": [
+            "tx.call",
+            "wasm.deploy",
+            "wasm.host.sstore"
+          ],
+          "rust_file": "crates/execution/src/wasm/call.rs"
+        },
+        {
+          "id": "exec.seq.apply_tx.wasm",
+          "dependencies": [
+            "wasm.call",
+            "exec.seq.apply_tx"
+          ],
+          "rust_file": "crates/execution/src/seq.rs"
+        },
+        {
+          "id": "stm.apply_block.wasm",
+          "dependencies": [
+            "exec.seq.apply_tx.wasm",
+            "stm.apply_block"
+          ],
+          "rust_file": "crates/execution/src/stm/mod.rs"
+        }
+      ]
+    },
+    "tier_12": {
+      "name": "Data Availability",
+      "description": "Erasure-coded chunks, DA root in header, sampling for light nodes",
+      "rust_crate": "crates/da",
+      "contracts": [
+        {
+          "id": "da.chunk.split",
+          "dependencies": [
+            "reed_solomon.encode",
+            "block.body"
+          ],
+          "rust_file": "crates/da/src/chunk.rs"
+        },
+        {
+          "id": "da.chunk.reconstruct",
+          "dependencies": [
+            "reed_solomon.decode",
+            "da.chunk.split"
+          ],
+          "rust_file": "crates/da/src/chunk.rs"
+        },
+        {
+          "id": "da.root",
+          "dependencies": [
+            "da.chunk.split",
+            "merkle.compute_root",
+            "kzg.commit"
+          ],
+          "rust_file": "crates/da/src/root.rs"
+        },
+        {
+          "id": "header.da_root",
+          "dependencies": [
+            "da.root",
+            "block.da_root.placeholder"
+          ],
+          "rust_file": "crates/types/src/header.rs"
+        },
+        {
+          "id": "gossip.da_chunks",
+          "dependencies": [
+            "gossip.mesh",
+            "da.chunk.split"
+          ],
+          "rust_file": "crates/network/src/topics.rs"
+        },
+        {
+          "id": "das.sample",
+          "dependencies": [
+            "gossip.da_chunks",
+            "da.root"
+          ],
+          "rust_file": "crates/da/src/das.rs"
+        },
+        {
+          "id": "das.fail_closed",
+          "dependencies": [
+            "das.sample"
+          ],
+          "rust_file": "crates/da/src/das.rs"
+        },
+        {
+          "id": "node.wire.da",
+          "dependencies": [
+            "node.wire.commit",
+            "header.da_root",
+            "gossip.da_chunks"
+          ],
+          "rust_file": "crates/node/src/wire.rs"
+        }
+      ]
+    },
+    "tier_13": {
+      "name": "Light Client & IBC-Shaped Verification",
+      "description": "Verify BLS QC + MPT proofs; packet-shaped interop later productized",
+      "rust_crate": "crates/light",
+      "contracts": [
+        {
+          "id": "light.verify_qc",
+          "dependencies": [
+            "qc.verify",
+            "header.hash"
+          ],
+          "rust_file": "crates/light/src/header.rs"
+        },
+        {
+          "id": "light.verify_account",
+          "dependencies": [
+            "light.verify_qc",
+            "mpt.verify",
+            "service.l1.jsonrpc.getProof"
+          ],
+          "rust_file": "crates/light/src/account.rs"
+        },
+        {
+          "id": "light.sync_checkpoints",
+          "dependencies": [
+            "light.verify_qc",
+            "ws.checkpoint"
+          ],
+          "rust_file": "crates/light/src/sync.rs"
+        },
+        {
+          "id": "ibc.commitment",
+          "dependencies": [
+            "merkle.compute_root",
+            "light.verify_qc"
+          ],
+          "rust_file": "crates/light/src/ibc.rs"
+        },
+        {
+          "id": "ibc.verify_packet",
+          "dependencies": [
+            "ibc.commitment",
+            "mpt.verify"
+          ],
+          "rust_file": "crates/light/src/ibc.rs"
+        }
+      ]
+    },
+    "tier_14": {
+      "name": "Hardware Limits, Pruning & Netsec Hardening",
+      "description": "Commodity validator budgets from architecture \u00a79; state rent/expiry",
+      "rust_crate": "crates/node, crates/storage, crates/network",
+      "contracts": [
+        {
+          "id": "limits.max_block_bytes",
+          "dependencies": [
+            "spec.params_registry",
+            "genesis.params"
+          ],
+          "rust_file": "crates/node/src/limits.rs"
+        },
+        {
+          "id": "limits.max_gas",
+          "dependencies": [
+            "limits.max_block_bytes",
+            "tx.gas_meter"
+          ],
+          "rust_file": "crates/node/src/limits.rs"
+        },
+        {
+          "id": "limits.state_growth",
+          "dependencies": [
+            "limits.max_gas",
+            "state.commit_root"
+          ],
+          "rust_file": "crates/node/src/limits.rs"
+        },
+        {
+          "id": "state.rent",
+          "dependencies": [
+            "tx.gas_meter",
+            "state.account"
+          ],
+          "rust_file": "crates/execution/src/rent.rs"
+        },
+        {
+          "id": "state.expiry",
+          "dependencies": [
+            "state.rent",
+            "mpt.prove"
+          ],
+          "rust_file": "crates/state/src/expiry.rs"
+        },
+        {
+          "id": "state.reactivate",
+          "dependencies": [
+            "state.expiry",
+            "mpt.prove_exclusion"
+          ],
+          "rust_file": "crates/state/src/expiry.rs"
+        },
+        {
+          "id": "prune.hot_cold",
+          "dependencies": [
+            "store.block.put",
+            "kv.rocksdb"
+          ],
+          "rust_file": "crates/storage/src/prune.rs"
+        },
+        {
+          "id": "sync.snapshot",
+          "dependencies": [
+            "state.commit_root",
+            "store.replay_from_genesis"
+          ],
+          "rust_file": "crates/storage/src/snapshot.rs"
+        },
+        {
+          "id": "netsec.asn_cap",
+          "dependencies": [
+            "netsec.ip_slot_cap"
+          ],
+          "rust_file": "crates/network/src/eclipse.rs"
+        },
+        {
+          "id": "netsec.peer_rotation",
+          "dependencies": [
+            "netsec.asn_cap",
+            "gossip.scoring"
+          ],
+          "rust_file": "crates/network/src/eclipse.rs"
+        },
+        {
+          "id": "fee.1559_optional",
+          "dependencies": [
+            "mempool.min_fee",
+            "limits.max_gas"
+          ],
+          "rust_file": "crates/execution/src/fees.rs"
+        }
+      ]
+    },
+    "tier_15": {
+      "name": "Observability",
+      "description": "Prometheus, tracing, SLOs against 1-2s blocks and <5s finality",
+      "rust_crate": "crates/observability",
+      "contracts": [
+        {
+          "id": "obs.structured_logging",
+          "dependencies": [],
+          "rust_file": "crates/observability/src/logging.rs"
+        },
+        {
+          "id": "obs.prometheus_exporter",
+          "dependencies": [
+            "cons.commit",
+            "gossip.mesh",
+            "mempool.size_limits"
+          ],
+          "rust_file": "crates/observability/src/prometheus.rs"
+        },
+        {
+          "id": "obs.otel_tracing",
+          "dependencies": [
+            "obs.prometheus_exporter",
+            "service.l1.jsonrpc.submitTx"
+          ],
+          "rust_file": "crates/observability/src/tracing.rs"
+        },
+        {
+          "id": "obs.slo_definitions",
+          "dependencies": [
+            "obs.prometheus_exporter",
+            "mvp.finality_lan"
+          ],
+          "rust_file": "crates/observability/src/slo.rs"
+        },
+        {
+          "id": "obs.alert_rules",
+          "dependencies": [
+            "obs.slo_definitions"
+          ],
+          "rust_file": "crates/observability/src/alerts.rs"
+        },
+        {
+          "id": "obs.grafana_dashboards",
+          "dependencies": [
+            "obs.prometheus_exporter"
+          ],
+          "rust_file": "configs/grafana/dashboards.json"
+        }
+      ]
+    },
+    "tier_16": {
+      "name": "SDK, Faucet & Client Integration",
+      "description": "Sign, submit, wait for finality; testnet faucet",
+      "rust_crate": "crates/sdk, crates/faucet",
+      "contracts": [
+        {
+          "id": "sdk.sign_tx",
+          "dependencies": [
+            "tx.sign",
+            "address.from_ed25519"
+          ],
+          "rust_file": "crates/sdk/src/sign.rs"
+        },
+        {
+          "id": "sdk.submit",
+          "dependencies": [
+            "sdk.sign_tx",
+            "service.l1.jsonrpc.submitTx"
+          ],
+          "rust_file": "crates/sdk/src/submit.rs"
+        },
+        {
+          "id": "sdk.wait_finality",
+          "dependencies": [
+            "sdk.submit",
+            "service.l1.jsonrpc.getStatus"
+          ],
+          "rust_file": "crates/sdk/src/finality.rs"
+        },
+        {
+          "id": "sdk.query_proof",
+          "dependencies": [
+            "sdk.wait_finality",
+            "service.l1.jsonrpc.getProof"
+          ],
+          "rust_file": "crates/sdk/src/proof.rs"
+        },
+        {
+          "id": "faucet.service",
+          "dependencies": [
+            "service.l1.jsonrpc.submitTx",
+            "tx.transfer"
+          ],
+          "rust_file": "crates/faucet/src/service.rs"
+        },
+        {
+          "id": "faucet.ratelimit",
+          "dependencies": [
+            "faucet.service"
+          ],
+          "rust_file": "crates/faucet/src/ratelimit.rs"
+        },
+        {
+          "id": "sdk.e2e_integration_test",
+          "dependencies": [
+            "sdk.wait_finality",
+            "faucet.service",
+            "service.l1.jsonrpc.getAccount"
+          ],
+          "rust_file": "crates/sdk/tests/e2e.rs"
+        }
+      ]
+    },
+    "tier_17": {
+      "name": "Operations & Emergency Controls",
+      "description": "Pause, RBAC, audit log; params already in spec.params_registry",
+      "rust_crate": "crates/node",
+      "contracts": [
+        {
+          "id": "gov.pause",
+          "dependencies": [
+            "spec.params_registry"
+          ],
+          "rust_file": "crates/execution/src/pause.rs"
+        },
+        {
+          "id": "ops.pause_cli",
+          "dependencies": [
+            "gov.pause"
+          ],
+          "rust_file": "crates/node/src/ops/pause.rs"
+        },
+        {
+          "id": "ops.rbac",
+          "dependencies": [
+            "ops.pause_cli",
+            "ed25519.verify"
+          ],
+          "rust_file": "crates/node/src/ops/rbac.rs"
+        },
+        {
+          "id": "ops.audit_log",
+          "dependencies": [
+            "ops.rbac",
+            "obs.structured_logging"
+          ],
+          "rust_file": "crates/node/src/ops/audit.rs"
+        },
+        {
+          "id": "ops.config_toggle",
+          "dependencies": [
+            "spec.params_registry",
+            "ops.rbac"
+          ],
+          "rust_file": "crates/node/src/ops/config.rs"
+        }
+      ]
+    },
+    "tier_18": {
+      "name": "IaC, Docker & Deterministic Build",
+      "description": "Reproducible multi-node bring-up",
+      "rust_crate": "infra/",
+      "contracts": [
+        {
+          "id": "iac.dockerfile",
+          "dependencies": [],
+          "rust_file": "infra/Dockerfile"
+        },
+        {
+          "id": "iac.deterministic_build",
+          "dependencies": [
+            "iac.dockerfile",
+            "tooling.rust_toolchain"
+          ],
+          "rust_file": "infra/build.sh"
+        },
+        {
+          "id": "iac.docker_compose",
+          "dependencies": [
+            "iac.dockerfile",
+            "node.config"
+          ],
+          "rust_file": "infra/docker-compose.yml"
+        },
+        {
+          "id": "iac.genesis_config",
+          "dependencies": [
+            "iac.docker_compose",
+            "genesis.hash"
+          ],
+          "rust_file": "infra/genesis.rs"
+        },
+        {
+          "id": "iac.node_bootstrap_scripts",
+          "dependencies": [
+            "iac.genesis_config",
+            "p2p.bootstrap"
+          ],
+          "rust_file": "infra/bootstrap.sh"
+        },
+        {
+          "id": "iac.terraform_cloud",
+          "dependencies": [
+            "iac.dockerfile"
+          ],
+          "rust_file": "infra/terraform/main.tf"
+        }
+      ]
+    },
+    "tier_19": {
+      "name": "Stress Testing & Benchmarks",
+      "description": "Multi-node load, STM vs seq, snapshot sync, hardware-budget checks",
+      "rust_crate": "tests/stress",
+      "contracts": [
+        {
+          "id": "stress.load_harness",
+          "dependencies": [
+            "sdk.e2e_integration_test",
+            "iac.docker_compose"
+          ],
+          "rust_file": "tests/stress/harness.rs"
+        },
+        {
+          "id": "stress.consensus_4node",
+          "dependencies": [
+            "stress.load_harness",
+            "mvp.finality_lan",
+            "cons.commit"
+          ],
+          "rust_file": "tests/stress/consensus.rs"
+        },
+        {
+          "id": "stress.throughput_benchmark",
+          "dependencies": [
+            "stress.load_harness",
+            "stm.apply_block"
+          ],
+          "rust_file": "tests/stress/throughput.rs"
+        },
+        {
+          "id": "stress.snapshot_sync_test",
+          "dependencies": [
+            "stress.load_harness",
+            "sync.snapshot",
+            "sync.headers_then_bodies"
+          ],
+          "rust_file": "tests/stress/sync.rs"
+        },
+        {
+          "id": "stress.das_withhold",
+          "dependencies": [
+            "stress.load_harness",
+            "das.fail_closed"
+          ],
+          "rust_file": "tests/stress/das.rs"
+        },
+        {
+          "id": "stress.perf_regression_ci",
+          "dependencies": [
+            "stress.throughput_benchmark",
+            "stress.consensus_4node"
+          ],
+          "rust_file": "tests/stress/ci.rs"
+        }
+      ]
+    },
+    "tier_20": {
+      "name": "Roadmap - Verkle, ZK, Encrypted Mempool, FHE, HotStuff",
+      "description": "Architecture-deferred; do not gate MVP. Slot into existing lanes.",
+      "rust_crate": "crates/state, crates/mempool, crates/execution, crates/consensus",
+      "contracts": [
+        {
+          "id": "verkle.commit",
+          "dependencies": [
+            "kzg.commit",
+            "state.account_trie"
+          ],
+          "rust_file": "crates/state/src/verkle.rs"
+        },
+        {
+          "id": "verkle.proof",
+          "dependencies": [
+            "verkle.commit"
+          ],
+          "rust_file": "crates/state/src/verkle.rs"
+        },
+        {
+          "id": "zk.validity.apply_block",
+          "dependencies": [
+            "exec.seq.apply_block",
+            "kzg.verify"
+          ],
+          "rust_file": "crates/zk/src/validity.rs"
+        },
+        {
+          "id": "zk.light_verify",
+          "dependencies": [
+            "zk.validity.apply_block",
+            "light.verify_qc"
+          ],
+          "rust_file": "crates/zk/src/light.rs"
+        },
+        {
+          "id": "enc_mempool.threshold_keygen",
+          "dependencies": [
+            "bls.keygen"
+          ],
+          "rust_file": "crates/mempool/src/encrypted.rs"
+        },
+        {
+          "id": "enc_mempool.encrypt",
+          "dependencies": [
+            "enc_mempool.threshold_keygen"
+          ],
+          "rust_file": "crates/mempool/src/encrypted.rs"
+        },
+        {
+          "id": "enc_mempool.decrypt_on_propose",
+          "dependencies": [
+            "enc_mempool.encrypt",
+            "cons.propose"
+          ],
+          "rust_file": "crates/mempool/src/encrypted.rs"
+        },
+        {
+          "id": "fhe.keygen.dkg",
+          "dependencies": [
+            "bls.keygen",
+            "staking.epoch_set_update"
+          ],
+          "rust_file": "crates/fhe/src/dkg.rs"
+        },
+        {
+          "id": "fhe.encrypt_input",
+          "dependencies": [
+            "fhe.keygen.dkg"
+          ],
+          "rust_file": "crates/fhe/src/tx.rs"
+        },
+        {
+          "id": "fhe.eval_circuit",
+          "dependencies": [
+            "fhe.encrypt_input",
+            "exec.seq.apply_tx"
+          ],
+          "rust_file": "crates/fhe/src/eval.rs"
+        },
+        {
+          "id": "fhe.threshold_decrypt",
+          "dependencies": [
+            "fhe.eval_circuit",
+            "fhe.keygen.dkg"
+          ],
+          "rust_file": "crates/fhe/src/decrypt.rs"
+        },
+        {
+          "id": "fhe.zk_of_eval",
+          "dependencies": [
+            "fhe.eval_circuit",
+            "zk.validity.apply_block"
+          ],
+          "rust_file": "crates/fhe/src/prove.rs"
+        },
+        {
+          "id": "cons.hotstuff.pipeline",
+          "dependencies": [
+            "cons.commit"
+          ],
+          "rust_file": "crates/consensus/src/hotstuff.rs"
+        }
+      ]
+    }
+  },
+  "development_schedule": {
+    "sprint_1_2": {
+      "tier": 0,
+      "description": "Tier 0 - Foundation Primitives",
+      "contracts_count": 36,
+      "parallel_teams": 8,
+      "rust_crates": [
+        "crates/types",
+        "crates/crypto"
+      ]
+    },
+    "sprint_3_4": {
+      "tier": 1,
+      "description": "Tier 1 - Core Data Structures",
+      "contracts_count": 28,
+      "parallel_teams": 7,
+      "rust_crates": [
+        "crates/state",
+        "crates/storage"
+      ]
+    },
+    "sprint_5_6": {
+      "tier": 2,
+      "description": "Tier 2 - Consensus Time & Randomness",
+      "contracts_count": 9,
+      "parallel_teams": 3,
+      "rust_crates": [
+        "crates/consensus"
+      ]
+    },
+    "sprint_7_8": {
+      "tier": 3,
+      "description": "Tier 3 - Genesis, Transactions & Sequential Execution",
+      "contracts_count": 26,
+      "parallel_teams": 7,
+      "rust_crates": [
+        "crates/execution",
+        "crates/types"
+      ]
+    },
+    "sprint_9_10": {
+      "tier": 4,
+      "description": "Tier 4 - Chain Storage, WAL & Mempool",
+      "contracts_count": 13,
+      "parallel_teams": 4,
+      "rust_crates": [
+        "crates/storage",
+        "crates/mempool"
+      ]
+    },
+    "sprint_11_12": {
+      "tier": 5,
+      "description": "Tier 5 - BFT Engine (In-Process)",
+      "contracts_count": 18,
+      "parallel_teams": 5,
+      "rust_crates": [
+        "crates/consensus"
+      ]
+    },
+    "sprint_13_14": {
+      "tier": 6,
+      "description": "Tier 6 - Networking & Gossip",
+      "contracts_count": 20,
+      "parallel_teams": 5,
+      "rust_crates": [
+        "crates/network"
+      ]
+    },
+    "sprint_15_16": {
+      "tier": 7,
+      "description": "Tier 7 - Node Wiring (MVP Chain)",
+      "contracts_count": 9,
+      "parallel_teams": 3,
+      "rust_crates": [
+        "crates/node"
+      ]
+    },
+    "sprint_17_18": {
+      "tier": 8,
+      "description": "Tier 8 - JSON-RPC API Gateway",
+      "contracts_count": 9,
+      "parallel_teams": 3,
+      "rust_crates": [
+        "crates/rpc"
+      ]
+    },
+    "sprint_19_20": {
+      "tier": 9,
+      "description": "Tier 9 - Staking, Slashing & Weak Subjectivity",
+      "contracts_count": 15,
+      "parallel_teams": 4,
+      "rust_crates": [
+        "crates/execution",
+        "crates/consensus"
+      ]
+    },
+    "sprint_21_22": {
+      "tier": 10,
+      "description": "Tier 10 - Parallel Execution (Block-STM)",
+      "contracts_count": 8,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/execution"
+      ]
+    },
+    "sprint_23_24": {
+      "tier": 11,
+      "description": "Tier 11 - WASM Contracts VM",
+      "contracts_count": 9,
+      "parallel_teams": 3,
+      "rust_crates": [
+        "crates/execution"
+      ]
+    },
+    "sprint_25_26": {
+      "tier": 12,
+      "description": "Tier 12 - Data Availability",
+      "contracts_count": 8,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/da"
+      ]
+    },
+    "sprint_27_28": {
+      "tier": 13,
+      "description": "Tier 13 - Light Client & IBC-Shaped Verification",
+      "contracts_count": 5,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/light"
+      ]
+    },
+    "sprint_29_30": {
+      "tier": 14,
+      "description": "Tier 14 - Hardware Limits, Pruning & Netsec Hardening",
+      "contracts_count": 11,
+      "parallel_teams": 3,
+      "rust_crates": [
+        "crates/node",
+        "crates/storage",
+        "crates/network"
+      ]
+    },
+    "sprint_31_32": {
+      "tier": 15,
+      "description": "Tier 15 - Observability",
+      "contracts_count": 6,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/observability"
+      ]
+    },
+    "sprint_33_34": {
+      "tier": 16,
+      "description": "Tier 16 - SDK, Faucet & Client Integration",
+      "contracts_count": 7,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/sdk",
+        "crates/faucet"
+      ]
+    },
+    "sprint_35_36": {
+      "tier": 17,
+      "description": "Tier 17 - Operations & Emergency Controls",
+      "contracts_count": 5,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "crates/node"
+      ]
+    },
+    "sprint_37_38": {
+      "tier": 18,
+      "description": "Tier 18 - IaC, Docker & Deterministic Build",
+      "contracts_count": 6,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "infra/"
+      ]
+    },
+    "sprint_39_40": {
+      "tier": 19,
+      "description": "Tier 19 - Stress Testing & Benchmarks",
+      "contracts_count": 6,
+      "parallel_teams": 2,
+      "rust_crates": [
+        "tests/stress"
+      ]
+    },
+    "sprint_41_42": {
+      "tier": 20,
+      "description": "Tier 20 - Roadmap - Verkle, ZK, Encrypted Mempool, FHE, HotStuff",
+      "contracts_count": 13,
+      "parallel_teams": 4,
+      "rust_crates": [
+        "crates/state",
+        "crates/mempool",
+        "crates/execution",
+        "crates/consensus"
+      ]
+    }
+  },
+  "critical_path": [
+    "hash.blake3",
+    "bls.sign",
+    "vrf.ecvrf.verify",
+    "mpt.put",
+    "state.commit_root",
+    "genesis.hash",
+    "tx.transfer",
+    "exec.seq.apply_block",
+    "exec.app_hash",
+    "store.block.put",
+    "mempool.fee_order",
+    "block.builder.local",
+    "vrf.leader.weighted",
+    "cons.propose",
+    "cons.prevote_step",
+    "cons.precommit_step",
+    "cons.commit",
+    "qc.verify",
+    "p2p.quic",
+    "gossip.mesh",
+    "node.wire.commit",
+    "mvp.finality_lan",
+    "service.l1.jsonrpc.submitTx",
+    "staking.epoch_set_update",
+    "slash.apply",
+    "ws.checkpoint",
+    "stm.equals_seq",
+    "wasm.call",
+    "da.root",
+    "das.fail_closed",
+    "light.verify_account",
+    "limits.max_gas",
+    "sdk.e2e_integration_test",
+    "iac.docker_compose",
+    "stress.consensus_4node"
+  ],
+  "architecture_coverage": {
+    "description": "architecture.md sections mapped to contract tiers",
+    "sections": [
+      {
+        "id": "\u00a72 consensus",
+        "tiers": [
+          "tier_2",
+          "tier_5",
+          "tier_9"
+        ]
+      },
+      {
+        "id": "\u00a73 execution / STM",
+        "tiers": [
+          "tier_3",
+          "tier_10",
+          "tier_11"
+        ]
+      },
+      {
+        "id": "\u00a74 state / MPT / prune",
+        "tiers": [
+          "tier_1",
+          "tier_14"
+        ]
+      },
+      {
+        "id": "\u00a75 networking",
+        "tiers": [
+          "tier_6",
+          "tier_14"
+        ]
+      },
+      {
+        "id": "\u00a76 data availability",
+        "tiers": [
+          "tier_12"
+        ]
+      },
+      {
+        "id": "\u00a77 cryptography",
+        "tiers": [
+          "tier_0",
+          "tier_20"
+        ]
+      },
+      {
+        "id": "\u00a78 FHE privacy",
+        "tiers": [
+          "tier_20"
+        ]
+      },
+      {
+        "id": "\u00a79 hardware / economics",
+        "tiers": [
+          "tier_9",
+          "tier_14"
+        ]
+      },
+      {
+        "id": "\u00a710 design targets",
+        "tiers": [
+          "tier_7",
+          "tier_15",
+          "tier_19"
+        ]
+      },
+      {
+        "id": "\u00a711 E2E client/RPC",
+        "tiers": [
+          "tier_8",
+          "tier_16"
+        ]
+      }
+    ]
+  },
+  "phase_status": {
+    "description": "MVP vs roadmap vs ops from docs/development-plan.md",
+    "items": [
+      {
+        "id": "MVP-1",
+        "name": "Sequential spec + store + mempool",
+        "status": "planned",
+        "tier": "tier_3,tier_4"
+      },
+      {
+        "id": "MVP-2",
+        "name": "In-process BFT + VRF",
+        "status": "planned",
+        "tier": "tier_5"
+      },
+      {
+        "id": "MVP-3",
+        "name": "Networked chain + RPC (devnet)",
+        "status": "planned",
+        "tier": "tier_6,tier_7,tier_8"
+      },
+      {
+        "id": "TNET-1",
+        "name": "Staking / slash / weak subjectivity",
+        "status": "planned",
+        "tier": "tier_9"
+      },
+      {
+        "id": "SCALE-1",
+        "name": "Block-STM == sequential spec",
+        "status": "planned",
+        "tier": "tier_10"
+      },
+      {
+        "id": "SCALE-2",
+        "name": "WASM contracts",
+        "status": "planned",
+        "tier": "tier_11"
+      },
+      {
+        "id": "DA-1",
+        "name": "Erasure coding + DAS",
+        "status": "planned",
+        "tier": "tier_12"
+      },
+      {
+        "id": "LC-1",
+        "name": "Light client + IBC-shaped verify",
+        "status": "planned",
+        "tier": "tier_13"
+      },
+      {
+        "id": "OPS-1",
+        "name": "Observability, faucet, IaC, stress",
+        "status": "planned",
+        "tier": "tier_15,tier_16,tier_18,tier_19"
+      },
+      {
+        "id": "RMAP-1",
+        "name": "Verkle / zk / encrypted mempool / FHE / HotStuff",
+        "status": "roadmap",
+        "tier": "tier_20"
+      }
+    ]
+  },
+  "forbidden_edges": {
+    "description": "Edges that would create implementation gaps",
+    "rules": [
+      "stm.apply_block must not ship without stm.equals_seq",
+      "cons.commit must not depend on tx.stake.bond (static genesis validators first)",
+      "gossip.* must not own finality rules (qc.verify / cons.commit do)",
+      "das.sample must not block first cons.commit (full blocks first)",
+      "rpc must not define tx validity (mempool.verify + exec.seq.apply_tx do)",
+      "FHE / Verkle / zk / enc_mempool must not gate mvp.finality_lan"
+    ]
+  },
+  "metadata": {
+    "version": "1.1",
+    "last_updated": "2026-08-29",
+    "language": "Rust 2021",
+    "cargo_workspace": "l1",
+    "sources": [
+      "docs/architecture.md",
+      "docs/development-plan.md"
+    ],
+    "changelog": [
+      {
+        "version": "1.1",
+        "date": "2026-08-29",
+        "changes": "Rust-only keys: rust_file, rust_crate, rust_crates, cargo_workspace (no language-foreign path fields)."
+      },
+      {
+        "version": "1.0",
+        "date": "2026-08-29",
+        "changes": "Initial L1 contract DAG from architecture.md and development-plan.md."
+      }
+    ]
+  }
+}

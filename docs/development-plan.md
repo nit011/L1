@@ -7,6 +7,8 @@ This document is the source of truth for *in what order* and *what “done” me
 
 The workspace already has crate shells (`types`, `crypto`, `state`, `storage`, `execution`, `mempool`, `consensus`, `network`, `rpc`, `node`). Treat them as the intended package boundaries. Fill them in this order; add crates only when a boundary is real (`da`, `sdk` later).
 
+Machine-readable DAG (Rust paths only): [`dependency-graph.json`](./dependency-graph.json) — each unit has `id`, `dependencies`, and `rust_file`.
+
 ---
 
 ## 0. How to read this plan
