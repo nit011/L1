@@ -1,0 +1,11 @@
+[package]
+name = "execution"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+types = { path = "../types" }
+state = { path = "../state" }
+crypto = { path = "../crypto" }
+thiserror.workspace = true

@@ -1,0 +1,14 @@
+[package]
+name = "rpc"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+types = { path = "../types" }
+state = { path = "../state" }
+execution = { path = "../execution" }
+mempool = { path = "../mempool" }
+tokio.workspace = true
+thiserror.workspace = true
+tracing.workspace = true

@@ -1,0 +1,24 @@
+[package]
+name = "node"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "node"
+path = "src/main.rs"
+
+[dependencies]
+types = { path = "../types" }
+crypto = { path = "../crypto" }
+state = { path = "../state" }
+storage = { path = "../storage" }
+execution = { path = "../execution" }
+mempool = { path = "../mempool" }
+consensus = { path = "../consensus" }
+network = { path = "../network" }
+rpc = { path = "../rpc" }
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror.workspace = true
