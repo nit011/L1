@@ -1,2 +1,5 @@
+# tooling.rust_toolchain — pin the compiler so hashes and CI stay reproducible.
 [toolchain]
-channel = "stable"
+channel = "1.93.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

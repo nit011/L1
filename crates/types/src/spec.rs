@@ -1,0 +1,52 @@
+//! Chain constants that must never change after Tier 2.
+//!
+//! See development-plan.md §1 (decisions table) and Tier 0 work items.
+
+/// Digest size in bytes (BLAKE3-256). Matches `types.hash`.
+pub const HASH_SIZE: usize = 32;
+
+/// Account address size in bytes. Independent of `crypto` at this tier.
+pub const ADDRESS_SIZE: usize = 32;
+
+/// Compressed BLS12-381 G1 public key size (validator identity).
+pub const VALIDATOR_ID_SIZE: usize = 48;
+
+/// Maximum serialized block size. Derived from the commodity-validator
+/// bandwidth floor in architecture.md §9 (tune in Tier 8).
+pub const MAX_BLOCK_BYTES: u32 = 2 * 1024 * 1024;
+
+/// Maximum serialized transaction size.
+pub const MAX_TX_BYTES: u32 = 64 * 1024;
+
+/// Maximum gas per block.
+pub const MAX_GAS: u64 = 50_000_000;
+
+/// PLACEHOLDER: epoch length in heights. Finalized with staking (Tier 6 / 9).
+pub const EPOCH_LENGTH: u64 = 100;
+
+/// PLACEHOLDER: unbonding period in heights. Finalized with staking (Tier 6 / 9).
+pub const UNBONDING_PERIOD: u64 = 1000;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sizes_match_blake3_and_bls_g1() {
+        const {
+            assert!(HASH_SIZE == 32);
+            assert!(ADDRESS_SIZE == 32);
+            assert!(VALIDATOR_ID_SIZE == 48);
+            assert!(MAX_TX_BYTES < MAX_BLOCK_BYTES);
+            assert!(MAX_GAS > 0);
+        }
+    }
+
+    #[test]
+    fn placeholders_are_nonzero_but_documented() {
+        const {
+            assert!(EPOCH_LENGTH > 0);
+            assert!(UNBONDING_PERIOD > EPOCH_LENGTH);
+        }
+    }
+}

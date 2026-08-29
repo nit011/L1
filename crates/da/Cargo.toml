@@ -1,9 +1,9 @@
 [package]
-name = "types"
+name = "da"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-serde.workspace = true
 thiserror.workspace = true
+reed-solomon-erasure.workspace = true

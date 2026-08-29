@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/types",
     "crates/crypto",
+    "crates/da",
     "crates/state",
     "crates/storage",
     "crates/execution",
@@ -23,3 +24,16 @@ serde = { version = "1", features = ["derive"] }
 thiserror = "2"
 tracing = "0.1"
 tokio = { version = "1", features = ["full"] }
+blake3 = "1"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+blst = "0.3"
+reed-solomon-erasure = "6"
+curve25519-dalek = { version = "4", features = ["digest"] }
+sha2 = "0.10"
+rand = "0.8"
+hex = "0.4"
+ark-bls12-381 = "0.5"
+ark-ec = "0.5"
+ark-ff = "0.5"
+ark-serialize = { version = "0.5", features = ["derive"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

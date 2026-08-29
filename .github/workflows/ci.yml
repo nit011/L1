@@ -1,0 +1,25 @@
+# tooling.clippy_ci
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    name: build-test-clippy-fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.93.0"
+          components: rustfmt, clippy
+      - name: fmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: test
+        run: cargo test --workspace
+      - name: no HashMap in consensus-critical crates
+        run: bash scripts/check_no_hashmap.sh
