@@ -1,5 +1,493 @@
-   0.030768416s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: dependency on `state` is newer than we are 1787933545.584926249s > 1787753184.606721666s "/Users/nitishkumar/Downloads/L1/crates/node"
-   0.031324291s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: fingerprint dirty for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: false }/TargetInner { name: "node", doc: true, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/src/main.rs", Edition2021) }
-   0.031356583s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDependency { name: "state", dep_mtime: FileTime { seconds: 1787933545, nanos: 584926249 }, max_mtime: FileTime { seconds: 1787753184, nanos: 606721666 } })
-    Checking node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)
-error: could not compile `node` (bin "node") due to 1 previous error
+   0.039196375s  INFO prepare_target{force=false package_id=consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus) target="consensus"}: cargo::core::compiler::fingerprint: fingerprint error for consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("consensus", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/consensus/src/lib.rs", Edition2021) }
+   0.039215000s  INFO prepare_target{force=false package_id=consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus) target="consensus"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/consensus-fccf3ca357dfd225/lib-consensus`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.041533334s  INFO prepare_target{force=false package_id=crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto) target="crypto"}: cargo::core::compiler::fingerprint: fingerprint error for crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("crypto", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/crypto/src/lib.rs", Edition2021) }
+   0.041538792s  INFO prepare_target{force=false package_id=crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto) target="crypto"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/crypto-56ce5cdb2a4db76a/lib-crypto`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.045124709s  INFO prepare_target{force=false package_id=state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state) target="state"}: cargo::core::compiler::fingerprint: fingerprint error for state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("state", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/state/src/lib.rs", Edition2021) }
+   0.045131709s  INFO prepare_target{force=false package_id=state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state) target="state"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/state-5c286b90646a88fa/lib-state`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.045574709s  INFO prepare_target{force=false package_id=types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types) target="types"}: cargo::core::compiler::fingerprint: fingerprint error for types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("types", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/types/src/lib.rs", Edition2021) }
+   0.045581209s  INFO prepare_target{force=false package_id=types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types) target="types"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/types-a3b05641e6d9b417/lib-types`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   0.045713292s  INFO prepare_target{force=false package_id=consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus) target="consensus"}: cargo::core::compiler::fingerprint: fingerprint error for consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("consensus", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/consensus/src/lib.rs", Edition2021) }
+   0.045716584s  INFO prepare_target{force=false package_id=consensus v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/consensus) target="consensus"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/consensus-c2b090937e28f66d/test-lib-consensus`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.045963500s  INFO prepare_target{force=false package_id=crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto) target="crypto"}: cargo::core::compiler::fingerprint: fingerprint error for crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("crypto", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/crypto/src/lib.rs", Edition2021) }
+   0.045967042s  INFO prepare_target{force=false package_id=crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto) target="crypto"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/crypto-f8d935b77e7cd147/test-lib-crypto`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.048533000s  INFO prepare_target{force=false package_id=execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution) target="execution"}: cargo::core::compiler::fingerprint: fingerprint error for execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("execution", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/execution/src/lib.rs", Edition2021) }
+   0.048540625s  INFO prepare_target{force=false package_id=execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution) target="execution"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/execution-2fb6589b7d94ee53/lib-execution`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.048751709s  INFO prepare_target{force=false package_id=execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution) target="execution"}: cargo::core::compiler::fingerprint: fingerprint error for execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("execution", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/execution/src/lib.rs", Edition2021) }
+   0.048755875s  INFO prepare_target{force=false package_id=execution v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/execution) target="execution"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/execution-345f5c6bc98240c7/test-lib-execution`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.048960250s  INFO prepare_target{force=false package_id=mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool) target="mempool"}: cargo::core::compiler::fingerprint: fingerprint error for mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("mempool", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/mempool/src/lib.rs", Edition2021) }
+   0.048963834s  INFO prepare_target{force=false package_id=mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool) target="mempool"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/mempool-229eb022b4bd7651/lib-mempool`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.049123917s  INFO prepare_target{force=false package_id=mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool) target="mempool"}: cargo::core::compiler::fingerprint: fingerprint error for mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("mempool", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/mempool/src/lib.rs", Edition2021) }
+   0.049127334s  INFO prepare_target{force=false package_id=mempool v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/mempool) target="mempool"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/mempool-53e3b7b386ee40b2/test-lib-mempool`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.050012917s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: fingerprint error for network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("network", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", Edition2021) }
+   0.050016417s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-c7b55781d9b5080d/lib-network`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.051107542s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint: fingerprint error for network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("network", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/network/src/lib.rs", Edition2021) }
+   0.051110917s  INFO prepare_target{force=false package_id=network v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/network) target="network"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/network-6f63868f3a42412e/test-lib-network`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.051883500s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: false }/TargetInner { name: "node", doc: true, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/src/main.rs", Edition2021) }
+   0.051887375s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-11febff05b51e154/bin-node`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.052214167s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint: fingerprint error for rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("rpc", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/rpc/src/lib.rs", Edition2021) }
+   0.052217834s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/rpc-76e3b8fa7c733160/lib-rpc`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.052424584s  INFO prepare_target{force=false package_id=storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage) target="storage"}: cargo::core::compiler::fingerprint: fingerprint error for storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("storage", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/storage/src/lib.rs", Edition2021) }
+   0.052428000s  INFO prepare_target{force=false package_id=storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage) target="storage"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/storage-d9f859eeff3e5933/lib-storage`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   0.053075875s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { name: "node", doc: true, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/src/main.rs", Edition2021) }
+   0.053079167s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="node"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-2d491d760593715b/test-bin-node`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.053407917s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint: fingerprint error for rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("rpc", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/rpc/src/lib.rs", Edition2021) }
+   0.053411125s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/rpc-d4ae2849c373f570/test-lib-rpc`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.053645209s  INFO prepare_target{force=false package_id=state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state) target="state"}: cargo::core::compiler::fingerprint: fingerprint error for state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("state", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/state/src/lib.rs", Edition2021) }
+   0.053648084s  INFO prepare_target{force=false package_id=state v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/state) target="state"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/state-65739e1efc4cad53/test-lib-state`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.053830167s  INFO prepare_target{force=false package_id=storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage) target="storage"}: cargo::core::compiler::fingerprint: fingerprint error for storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("storage", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/storage/src/lib.rs", Edition2021) }
+   0.053833125s  INFO prepare_target{force=false package_id=storage v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/storage) target="storage"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/storage-bb63364fd56ff13f/test-lib-storage`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.054000542s  INFO prepare_target{force=false package_id=types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types) target="types"}: cargo::core::compiler::fingerprint: fingerprint error for types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("types", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/types/src/lib.rs", Edition2021) }
+   0.054003584s  INFO prepare_target{force=false package_id=types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types) target="types"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/types-7ba32805b93d7f6a/test-lib-types`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking types v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/types)
+    Checking crypto v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/crypto)
+error: could not compile `types` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `types` (lib test) due to 3 previous errors
+error: could not compile `crypto` (lib) due to 5 previous errors; 1 warning emitted
+error: could not compile `crypto` (lib test) due to 5 previous errors; 2 warnings emitted
