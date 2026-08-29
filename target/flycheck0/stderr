@@ -1,5 +1,5 @@
-   0.097165000s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="finality"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { kind: "test", name: "finality", benched: false, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/tests/finality.rs", Edition2021) }
-   0.097184292s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="finality"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-33108cdc281bdfe7/test-integration-test-finality`
+   0.280225458s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint: fingerprint error for rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("rpc", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/rpc/src/lib.rs", Edition2021) }
+   0.281238875s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/rpc-5d25540afc97bb21/lib-rpc`
 
 Caused by:
     No such file or directory (os error 2)
@@ -22,8 +22,8 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.099859208s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="simnet"}: cargo::core::compiler::fingerprint: fingerprint error for node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)/Check { test: true }/TargetInner { kind: "test", name: "simnet", benched: false, ..: with_path("/Users/nitishkumar/Downloads/L1/crates/node/tests/simnet.rs", Edition2021) }
-   0.099865458s  INFO prepare_target{force=false package_id=node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node) target="simnet"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/node-8a06c78554cadb44/test-integration-test-simnet`
+   0.305914291s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint: fingerprint error for rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("rpc", ["lib"], "/Users/nitishkumar/Downloads/L1/crates/rpc/src/lib.rs", Edition2021) }
+   0.305922458s  INFO prepare_target{force=false package_id=rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc) target="rpc"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/nitishkumar/Downloads/L1/target/debug/.fingerprint/rpc-347b282cf65a2153/test-lib-rpc`
 
 Caused by:
     No such file or directory (os error 2)
@@ -46,5 +46,7 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-    Checking node v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/node)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s
+    Checking rpc v0.1.0 (/Users/nitishkumar/Downloads/L1/crates/rpc)
+error: could not compile `rpc` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rpc` (lib) due to 1 previous error

@@ -30,6 +30,11 @@ impl AccountTrie {
     pub fn root(&self) -> [u8; 32] {
         self.trie.root()
     }
+
+    /// Underlying MPT so RPC can call `mpt.prove` (not a second prover).
+    pub fn as_trie(&self) -> &Trie {
+        &self.trie
+    }
 }
 
 /// Contract storage trie: `storage_key → value` (independent of accounts).
