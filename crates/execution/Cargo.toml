@@ -10,8 +10,15 @@ state = { path = "../state" }
 crypto = { path = "../crypto" }
 thiserror.workspace = true
 consensus = { path = "../consensus" }
+storage = { path = "../storage" }
 
 [dev-dependencies]
 hex.workspace = true
 mempool = { path = "../mempool" }
-storage = { path = "../storage" }
+proptest = "1"
+criterion = "0.5"
+rand.workspace = true
+
+[[bench]]
+name = "hot_account"
+harness = false

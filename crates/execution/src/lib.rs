@@ -9,3 +9,4 @@ pub mod receipt;
 pub mod seq;
 pub mod slash;
 pub mod staking;
+pub mod stm;
