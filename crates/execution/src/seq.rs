@@ -27,22 +27,37 @@ use crypto::tx::verify_ed25519;
 use state::account::Account;
 use state::root::commit_tries;
 use state::tries::{AccountTrie, ContractStorageTrie};
+use state::version::VersionedSlots;
+use storage::memory::MemoryStore;
 use types::block::{receipts_root, tx_root_signed, Block};
+use types::collections::{Map, Set};
 use types::genesis::Genesis;
 use types::tx::SignedTx;
 use types::{Address, Amount, Hash, ParamsRegistry};
 
-/// In-memory world state (accounts + empty contract storage at this tier).
+/// In-memory world state (accounts + contract storage + WASM code).
 #[derive(Clone, Debug, Default)]
 pub struct World {
     /// Accounts MPT.
     pub accounts: AccountTrie,
-    /// Contract storage (empty for native transfers).
+    /// Contract storage (architecture.md §4.1).
     pub storage: ContractStorageTrie,
     /// Staking ledger (architecture.md §2.5). Not part of `state.commit_root` in this tier.
     pub staking: StakingState,
     /// `spec.params_registry` copy used by staking admission.
     pub params: ParamsRegistry,
+    /// Installed bytecode keyed by contract address (`wasm.deploy`).
+    pub code: Map<Address, Vec<u8>>,
+    /// Per-contract execution guards (frozen no-reentrancy policy).
+    pub executing: Set<Address>,
+    /// Storage keys read by host `sload` during the current tx (STM RW-set).
+    pub storage_reads: Set<Vec<u8>>,
+    /// Storage keys written by host `sstore` during the current tx.
+    pub storage_writes: Set<Vec<u8>>,
+    /// Versioned overlay for host storage (`state.versioned_slot.*`).
+    pub versioned: VersionedSlots<MemoryStore>,
+    /// Remaining wasmtime fuel after the last WASM run (tests / determinism).
+    pub wasm_fuel_left: u64,
 }
 
 impl World {
@@ -57,6 +72,12 @@ impl World {
             storage: ContractStorageTrie::new(),
             staking: StakingState::default(),
             params: g.params.registry.clone(),
+            code: Map::new(),
+            executing: Set::new(),
+            storage_reads: Set::new(),
+            storage_writes: Set::new(),
+            versioned: VersionedSlots::new(MemoryStore::new()),
+            wasm_fuel_left: 0,
         }
     }
 
@@ -99,8 +120,14 @@ fn fail(reason: RejectReason) -> Receipt {
     }
 }
 
-/// Per-tx transition. Contract: `exec.seq.apply_tx`.
+/// Per-tx transition. Contract: `exec.seq.apply_tx` / `exec.seq.apply_tx.wasm`.
+///
+/// WASM deploy/call ride the same signature → nonce → `gas_meter` →
+/// balance path as transfers. They do not skip those checks.
 pub fn apply_tx(world: &mut World, signed: &SignedTx) -> Receipt {
+    world.storage_reads.clear();
+    world.storage_writes.clear();
+    world.executing.clear();
     if verify_ed25519(signed).is_err() {
         return fail(RejectReason::Signature);
     }
@@ -154,40 +181,98 @@ pub fn apply_tx(world: &mut World, signed: &SignedTx) -> Receipt {
         };
     }
 
-    let Some(transfer) = tx.as_transfer() else {
-        return fail(RejectReason::Gas);
-    };
-    if let Err(e) = balance_check(tx, transfer, &sender) {
-        return fail(e.into());
-    }
+    if let Some(deploy) = tx.as_deploy() {
+        if let Err(e) = value_balance_check(tx, Amount::ZERO, &sender) {
+            return fail(e.into());
+        }
+        if crate::wasm::deploy::prepare(tx, deploy).is_err() {
+            return fail(RejectReason::WasmInvalid);
+        }
+        let snapshot = world.clone();
+        let mut sender = sender;
+        sender.balance = sender.balance.checked_sub(tx.max_fee).expect("checked");
+        sender.nonce = sender.nonce.checked_add(1).unwrap_or(sender.nonce);
+        world.accounts.put(&from, &sender);
+        let addr = crate::wasm::deploy::create_address(&from, tx.nonce);
+        match crate::wasm::deploy::install(world, addr, &deploy.code) {
+            Ok(()) => Receipt {
+                success: true,
+                gas_used: gas,
+                events: vec![Event::Wasm {
+                    from,
+                    contract: addr,
+                }],
+                reason: None,
+            },
+            Err(r) => {
+                *world = snapshot;
+                fail(r)
+            }
+        }
+    } else if let Some(call) = tx.as_call() {
+        if let Err(e) = value_balance_check(tx, Amount::ZERO, &sender) {
+            return fail(e.into());
+        }
+        if !world.code.contains_key(&call.to) {
+            return fail(RejectReason::WasmNoCode);
+        }
+        let snapshot = world.clone();
+        let mut sender = sender;
+        sender.balance = sender.balance.checked_sub(tx.max_fee).expect("checked");
+        sender.nonce = sender.nonce.checked_add(1).unwrap_or(sender.nonce);
+        world.accounts.put(&from, &sender);
+        let fuel = crate::wasm::gas::fuel_budget(tx, gas);
+        match crate::wasm::call::call(world, call, fuel) {
+            Ok(()) => Receipt {
+                success: true,
+                gas_used: gas,
+                events: vec![Event::Wasm {
+                    from,
+                    contract: call.to,
+                }],
+                reason: None,
+            },
+            Err(r) => {
+                *world = snapshot;
+                fail(r)
+            }
+        }
+    } else {
+        let Some(transfer) = tx.as_transfer() else {
+            return fail(RejectReason::Gas);
+        };
+        if let Err(e) = balance_check(tx, transfer, &sender) {
+            return fail(e.into());
+        }
 
-    let mut sender = sender;
-    sender.balance = sender
-        .balance
-        .checked_sub(transfer.amount.checked_add(tx.max_fee).expect("checked"))
-        .expect("checked");
-    sender.nonce = sender.nonce.checked_add(1).unwrap_or(sender.nonce);
-    world.accounts.put(&from, &sender);
+        let mut sender = sender;
+        sender.balance = sender
+            .balance
+            .checked_sub(transfer.amount.checked_add(tx.max_fee).expect("checked"))
+            .expect("checked");
+        sender.nonce = sender.nonce.checked_add(1).unwrap_or(sender.nonce);
+        world.accounts.put(&from, &sender);
 
-    let mut recv = world
-        .accounts
-        .get(&transfer.to)
-        .unwrap_or_else(Account::empty);
-    recv.balance = recv
-        .balance
-        .checked_add(transfer.amount)
-        .unwrap_or(recv.balance);
-    world.accounts.put(&transfer.to, &recv);
+        let mut recv = world
+            .accounts
+            .get(&transfer.to)
+            .unwrap_or_else(Account::empty);
+        recv.balance = recv
+            .balance
+            .checked_add(transfer.amount)
+            .unwrap_or(recv.balance);
+        world.accounts.put(&transfer.to, &recv);
 
-    Receipt {
-        success: true,
-        gas_used: gas,
-        events: vec![Event::Transfer {
-            from,
-            to: transfer.to,
-            amount: transfer.amount,
-        }],
-        reason: None,
+        Receipt {
+            success: true,
+            gas_used: gas,
+            events: vec![Event::Transfer {
+                from,
+                to: transfer.to,
+                amount: transfer.amount,
+            }],
+            reason: None,
+        }
     }
 }
 
@@ -369,5 +454,96 @@ mod tests {
         };
         let tagged = crypto::apply_domain(crypto::DomainTag::Header, &h.hash_preimage());
         assert_eq!(h.hash(), Hash::from_bytes(hash_to_array(&tagged)));
+    }
+
+    fn store_wasm() -> Vec<u8> {
+        wat::parse_str(
+            r#"(module
+                (import "host" "sload" (func $sload (param i32) (result i64)))
+                (import "host" "sstore" (func $sstore (param i32 i64)))
+                (import "host" "reenter" (func $reenter))
+                (func (export "call")
+                    (local $v i64)
+                    (local.set $v (i64.add (call $sload (i32.const 0)) (i64.const 1)))
+                    (call $sstore (i32.const 0) (local.get $v))
+                )
+            )"#,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn apply_tx_wasm_deploy_call_and_invalid() {
+        let sk = sk_from(1);
+        let from = from_ed25519(&sk.verifying_key());
+        let mut g = Genesis::new(ChainId::new(1));
+        g.insert_alloc(
+            from,
+            GenesisAccount {
+                balance: Amount::new(1_000_000),
+                nonce: Nonce::ZERO,
+                code_hash: Hash::ZERO,
+            },
+        );
+        let mut world = World::from_genesis(&g);
+        let bad = types::tx::Tx::deploy(
+            ChainId::new(1),
+            Nonce::ZERO,
+            types::GAS_DEPLOY,
+            Amount::new(1),
+            vec![0, 1, 2],
+        );
+        let r_bad = apply_tx(&mut world, &sign(&sk, bad));
+        assert!(!r_bad.success);
+        assert_eq!(r_bad.reason, Some(RejectReason::WasmInvalid));
+        assert_eq!(world.account(&from).nonce, Nonce::ZERO);
+
+        let tx = types::tx::Tx::deploy(
+            ChainId::new(1),
+            Nonce::ZERO,
+            types::GAS_DEPLOY,
+            Amount::new(1),
+            store_wasm(),
+        );
+        let r = apply_tx(&mut world, &sign(&sk, tx));
+        assert!(r.success);
+        let addr = crate::wasm::deploy::create_address(&from, Nonce::ZERO);
+        let call = types::tx::Tx::call(
+            ChainId::new(1),
+            Nonce(1),
+            types::GAS_CALL + 50_000,
+            Amount::new(1),
+            addr,
+            vec![],
+        );
+        let r2 = apply_tx(&mut world, &sign(&sk, call));
+        assert!(r2.success);
+        assert_eq!(crate::wasm::host::sload(&mut world, addr, 0), 1);
+    }
+
+    #[test]
+    fn apply_tx_wasm_still_checks_nonce() {
+        let sk = sk_from(1);
+        let from = from_ed25519(&sk.verifying_key());
+        let mut g = Genesis::new(ChainId::new(1));
+        g.insert_alloc(
+            from,
+            GenesisAccount {
+                balance: Amount::new(1_000_000),
+                nonce: Nonce::ZERO,
+                code_hash: Hash::ZERO,
+            },
+        );
+        let mut world = World::from_genesis(&g);
+        let tx = types::tx::Tx::deploy(
+            ChainId::new(1),
+            Nonce(9),
+            types::GAS_DEPLOY,
+            Amount::new(1),
+            store_wasm(),
+        );
+        let r = apply_tx(&mut world, &sign(&sk, tx));
+        assert!(!r.success);
+        assert_eq!(r.reason, Some(RejectReason::WrongNonce));
     }
 }

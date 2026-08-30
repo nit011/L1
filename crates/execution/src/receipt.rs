@@ -32,6 +32,14 @@ pub enum RejectReason {
     StakeUnbonding,
     /// Staking: insufficient bonded/delegated balance.
     StakeInsufficient,
+    /// WASM bytecode failed validation (`wasm.deploy`).
+    WasmInvalid,
+    /// WASM fuel exhausted (`wasm.meter`).
+    WasmGas,
+    /// Frozen no-reentrancy policy (`wasm.call`).
+    WasmReentrancy,
+    /// Missing contract code.
+    WasmNoCode,
 }
 
 /// Receipt. Contract: `exec.receipt`.
@@ -63,6 +71,10 @@ impl Receipt {
             Some(RejectReason::StakeTombstone) => 6,
             Some(RejectReason::StakeUnbonding) => 7,
             Some(RejectReason::StakeInsufficient) => 8,
+            Some(RejectReason::WasmInvalid) => 9,
+            Some(RejectReason::WasmGas) => 10,
+            Some(RejectReason::WasmReentrancy) => 11,
+            Some(RejectReason::WasmNoCode) => 12,
         });
         p.extend_from_slice(&(self.events.len() as u32).to_be_bytes());
         for e in &self.events {
@@ -77,6 +89,11 @@ impl Receipt {
                     p.push(1);
                     p.extend_from_slice(from.as_bytes());
                     p.extend_from_slice(&amount.0.to_be_bytes());
+                }
+                Event::Wasm { from, contract } => {
+                    p.push(2);
+                    p.extend_from_slice(from.as_bytes());
+                    p.extend_from_slice(contract.as_bytes());
                 }
             }
         }

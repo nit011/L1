@@ -31,6 +31,12 @@ pub const MAX_GAS: u64 = 50_000_000;
 /// Intrinsic gas for a native transfer (architecture.md §3 metering).
 pub const GAS_TRANSFER: u64 = 21_000;
 
+/// Intrinsic gas for `tx.deploy` (architecture.md §3). Not a `ParamId`.
+pub const GAS_DEPLOY: u64 = 50_000;
+
+/// Intrinsic gas for `tx.call`.
+pub const GAS_CALL: u64 = 21_000;
+
 /// PLACEHOLDER: epoch length in heights. Finalized with staking (Tier 6 / 9).
 pub const EPOCH_LENGTH: u64 = 100;
 
@@ -81,6 +87,8 @@ mod tests {
             assert!(MIN_TX_FEE > 0);
             assert!(MAX_GAS > 0);
             assert!(GAS_TRANSFER > 0);
+            assert!(GAS_DEPLOY > GAS_TRANSFER);
+            assert!(GAS_CALL > 0);
             assert!(GAS_TRANSFER < MAX_GAS);
         }
     }

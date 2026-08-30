@@ -163,7 +163,7 @@ impl Tx {
     pub fn as_stake(&self) -> Option<&StakePayload> {
         match &self.payload {
             TxPayload::Stake(s) => Some(s),
-            TxPayload::Transfer(_) => None,
+            TxPayload::Transfer(_) | TxPayload::Deploy(_) | TxPayload::Call(_) => None,
         }
     }
 }

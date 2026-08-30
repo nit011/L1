@@ -45,6 +45,10 @@ impl From<RejectReason> for VerifyError {
             | RejectReason::StakeTombstone
             | RejectReason::StakeUnbonding
             | RejectReason::StakeInsufficient => Self::InsufficientBalance,
+            RejectReason::WasmInvalid
+            | RejectReason::WasmGas
+            | RejectReason::WasmReentrancy
+            | RejectReason::WasmNoCode => Self::Gas,
         }
     }
 }
@@ -87,6 +91,8 @@ pub fn verify(signed: &SignedTx, account: &Account) -> Result<(), VerifyError> {
             StakeKind::Unbond | StakeKind::Undelegate | StakeKind::Withdraw => Amount::ZERO,
         };
         value_balance_check(&signed.tx, debit, account)?;
+    } else if signed.tx.as_deploy().is_some() || signed.tx.as_call().is_some() {
+        value_balance_check(&signed.tx, Amount::ZERO, account)?;
     } else {
         let Some(transfer) = signed.tx.as_transfer() else {
             return Err(VerifyError::Gas);

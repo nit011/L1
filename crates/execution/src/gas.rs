@@ -1,7 +1,7 @@
 //! Gas metering against `spec.constants` (architecture.md §3).
 
 use types::tx::Tx;
-use types::{GAS_TRANSFER, MAX_GAS};
+use types::{GAS_CALL, GAS_DEPLOY, GAS_TRANSFER, MAX_GAS};
 
 /// Gas metering error.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -19,6 +19,8 @@ pub fn gas_meter(tx: &Tx) -> Result<u64, GasError> {
     }
     let cost = match &tx.payload {
         types::tx::TxPayload::Transfer(_) | types::tx::TxPayload::Stake(_) => GAS_TRANSFER,
+        types::tx::TxPayload::Deploy(_) => GAS_DEPLOY,
+        types::tx::TxPayload::Call(_) => GAS_CALL,
     };
     if tx.gas_limit < cost {
         return Err(GasError::LimitTooLow);

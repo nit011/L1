@@ -1,0 +1,10 @@
+/Users/nitishkumar/Downloads/L1/target/debug/deps/wasmtime_wit_bindgen-a19efa1342bc096a.d: /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/lib.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/rust.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/source.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/types.rs
+
+/Users/nitishkumar/Downloads/L1/target/debug/deps/libwasmtime_wit_bindgen-a19efa1342bc096a.rlib: /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/lib.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/rust.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/source.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/types.rs
+
+/Users/nitishkumar/Downloads/L1/target/debug/deps/libwasmtime_wit_bindgen-a19efa1342bc096a.rmeta: /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/lib.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/rust.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/source.rs /Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/types.rs
+
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/lib.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/rust.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/source.rs:
+/Users/nitishkumar/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wasmtime-wit-bindgen-26.0.1/src/types.rs:

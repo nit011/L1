@@ -4,6 +4,13 @@
 //! re-execute stale txs via [`crate::seq::apply_tx`]. The committed
 //! `(world, receipts, app_hash)` must match [`crate::seq::apply_block`].
 //!
+//! # `stm.apply_block.wasm`
+//!
+//! Speculative execution uses the same [`seq::apply_tx`] that now routes
+//! `tx.deploy` / `tx.call` (after Tier 3 signature/nonce/balance/`gas_meter`
+//! checks). Host `sload`/`sstore` keys are merged into [`rwset::SpecTx`]
+//! read/write sets so overlapping contract slots conflict and re-execute.
+//!
 //! Hot accounts (architecture.md §3.5 / §4.4) serialize: many txs touching one
 //! account form a conflict chain. That is expected, not a bug.
 

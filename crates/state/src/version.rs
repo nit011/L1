@@ -26,6 +26,26 @@ pub struct VersionedSlots<S: Store> {
     store: S,
 }
 
+impl<S: Store + Clone> Clone for VersionedSlots<S> {
+    fn clone(&self) -> Self {
+        Self {
+            store: self.store.clone(),
+        }
+    }
+}
+
+impl<S: Store> std::fmt::Debug for VersionedSlots<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("VersionedSlots").finish_non_exhaustive()
+    }
+}
+
+impl<S: Store + Default> Default for VersionedSlots<S> {
+    fn default() -> Self {
+        Self::new(S::default())
+    }
+}
+
 const SEP: u8 = 0x00;
 
 fn version_key(key: &[u8], version: SlotVersion) -> Vec<u8> {

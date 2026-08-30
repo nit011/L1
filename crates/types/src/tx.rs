@@ -7,9 +7,8 @@
 //!  tag:u8 || …variant`
 //!
 //! Transfer (`tag = 0`): `to:32 || amount:u128`.
-//! Staking (`tags 1–5`): see [`crate::staking`] (`tx.stake.*`). Transfer layout
-//! is unchanged.
-//! Changing this layout forks `tx.sign` and `block.tx_root`.
+//! Staking (`tags 1–5`): see [`crate::staking`].
+//! Deploy (`tag = 6`): `code_len:u32 || code`. Call (`tag = 7`): `to:32 || data_len:u32 || data`.
 
 use crate::encoding::{decode, encode};
 use crate::staking::{StakeKind, StakePayload};
@@ -31,6 +30,26 @@ pub enum TxPayload {
     Transfer(Transfer),
     /// Staking (`tx.stake.bond` … `tx.stake.withdraw`).
     Stake(StakePayload),
+    /// Create a contract (`tx.deploy`).
+    Deploy(Deploy),
+    /// Call a contract (`tx.call`).
+    Call(Call),
+}
+
+/// WASM deploy payload. Contract: `tx.deploy`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Deploy {
+    /// Guest bytecode.
+    pub code: Vec<u8>,
+}
+
+/// WASM call payload. Contract: `tx.call`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Call {
+    /// Contract account (`types.address`).
+    pub to: Address,
+    /// Calldata (may be empty).
+    pub data: Vec<u8>,
 }
 
 /// Unsigned envelope. Contract: `tx.envelope`.
@@ -99,6 +118,17 @@ impl Tx {
                         p.extend_from_slice(&s.amount.0.to_be_bytes());
                     }
                 }
+            }
+            TxPayload::Deploy(d) => {
+                p.push(6);
+                p.extend_from_slice(&(d.code.len() as u32).to_be_bytes());
+                p.extend_from_slice(&d.code);
+            }
+            TxPayload::Call(c) => {
+                p.push(7);
+                p.extend_from_slice(c.to.as_bytes());
+                p.extend_from_slice(&(c.data.len() as u32).to_be_bytes());
+                p.extend_from_slice(&c.data);
             }
         }
         p
@@ -189,6 +219,57 @@ impl Tx {
                     }),
                 })
             }
+            6 => {
+                if raw.len() < 45 {
+                    return Err(TypesError::BadLength {
+                        expected: 45,
+                        actual: raw.len(),
+                    });
+                }
+                let n = u32::from_be_bytes(raw[41..45].try_into().unwrap()) as usize;
+                if raw.len() != 45 + n {
+                    return Err(TypesError::BadLength {
+                        expected: 45 + n,
+                        actual: raw.len(),
+                    });
+                }
+                Ok(Self {
+                    chain_id,
+                    nonce,
+                    gas_limit,
+                    max_fee,
+                    payload: TxPayload::Deploy(Deploy {
+                        code: raw[45..].to_vec(),
+                    }),
+                })
+            }
+            7 => {
+                if raw.len() < 41 + 32 + 4 {
+                    return Err(TypesError::BadLength {
+                        expected: 77,
+                        actual: raw.len(),
+                    });
+                }
+                let mut to = [0u8; 32];
+                to.copy_from_slice(&raw[41..73]);
+                let n = u32::from_be_bytes(raw[73..77].try_into().unwrap()) as usize;
+                if raw.len() != 77 + n {
+                    return Err(TypesError::BadLength {
+                        expected: 77 + n,
+                        actual: raw.len(),
+                    });
+                }
+                Ok(Self {
+                    chain_id,
+                    nonce,
+                    gas_limit,
+                    max_fee,
+                    payload: TxPayload::Call(Call {
+                        to: Address::from_bytes(to),
+                        data: raw[77..].to_vec(),
+                    }),
+                })
+            }
             _ => Err(TypesError::Kv("unknown tx payload tag")),
         }
     }
@@ -197,7 +278,58 @@ impl Tx {
     pub fn as_transfer(&self) -> Option<&Transfer> {
         match &self.payload {
             TxPayload::Transfer(t) => Some(t),
-            TxPayload::Stake(_) => None,
+            TxPayload::Stake(_) | TxPayload::Deploy(_) | TxPayload::Call(_) => None,
+        }
+    }
+
+    /// Deploy helper. Contract: `tx.deploy` (payload on [`Tx`] / `tx.envelope`).
+    pub fn deploy(
+        chain_id: ChainId,
+        nonce: Nonce,
+        gas_limit: u64,
+        max_fee: Amount,
+        code: Vec<u8>,
+    ) -> Self {
+        Self {
+            chain_id,
+            nonce,
+            gas_limit,
+            max_fee,
+            payload: TxPayload::Deploy(Deploy { code }),
+        }
+    }
+
+    /// Call helper. Contract: `tx.call`.
+    pub fn call(
+        chain_id: ChainId,
+        nonce: Nonce,
+        gas_limit: u64,
+        max_fee: Amount,
+        to: Address,
+        data: Vec<u8>,
+    ) -> Self {
+        Self {
+            chain_id,
+            nonce,
+            gas_limit,
+            max_fee,
+            payload: TxPayload::Call(Call { to, data }),
+        }
+    }
+
+    /// Deploy view.
+    pub fn as_deploy(&self) -> Option<&Deploy> {
+        match &self.payload {
+            TxPayload::Deploy(d) => Some(d),
+            _ => None,
+        }
+    }
+
+    /// Call view. Contract: `tx.call` (`types.address` on [`Call::to`]).
+    pub fn as_call(&self) -> Option<&Call> {
+        match &self.payload {
+            TxPayload::Call(c) => Some(c),
+            _ => None,
         }
     }
 }
@@ -229,6 +361,28 @@ mod tests {
         );
         assert_eq!(Tx::decode(&tx.encode()).unwrap(), tx);
         assert!(tx.as_transfer().is_some());
+    }
+
+    #[test]
+    fn encode_decode_deploy_and_call() {
+        let d = Tx::deploy(
+            ChainId::new(1),
+            Nonce(1),
+            50_000,
+            Amount::new(1),
+            vec![0, 1, 2],
+        );
+        assert_eq!(Tx::decode(&d.encode()).unwrap(), d);
+        let c = Tx::call(
+            ChainId::new(1),
+            Nonce(2),
+            21_000,
+            Amount::new(1),
+            Address::from_bytes([3u8; 32]),
+            vec![9],
+        );
+        assert_eq!(Tx::decode(&c.encode()).unwrap(), c);
+        assert_eq!(c.as_call().unwrap().to, Address::from_bytes([3u8; 32]));
     }
 
     #[test]

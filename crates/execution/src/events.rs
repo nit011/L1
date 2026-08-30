@@ -21,4 +21,11 @@ pub enum Event {
         /// Amount moved in the staking ledger.
         amount: Amount,
     },
+    /// WASM deploy or call (architecture.md §3 / §4.1).
+    Wasm {
+        /// Signer.
+        from: Address,
+        /// Contract account.
+        contract: Address,
+    },
 }

@@ -20,6 +20,12 @@ fn merge_spec(dst: &mut World, spec: &SpecTx) {
             dst.staking = spec.spec_world.staking.clone();
             continue;
         }
+        if key.len() == 64 {
+            if let Some(val) = spec.spec_world.storage.get(key) {
+                dst.storage.put(key, val);
+            }
+            continue;
+        }
         if key.len() != 32 {
             continue;
         }
@@ -29,6 +35,9 @@ fn merge_spec(dst: &mut World, spec: &SpecTx) {
         if let Some(acc) = spec.spec_world.accounts.get(&addr) {
             dst.accounts.put(&addr, &acc);
         }
+        if let Some(code) = spec.spec_world.code.get(&addr) {
+            dst.code.insert(addr, code.clone());
+        }
     }
 }
 
@@ -36,6 +45,11 @@ fn bump_writes(slots: &mut VersionedSlots<MemoryStore>, world: &World, writes: &
     for key in writes {
         if key.as_slice() == STAKING_SLOT {
             let _ = slots.write(key, b"s".to_vec());
+            continue;
+        }
+        if key.len() == 64 {
+            let val = world.storage.get(key).unwrap_or_default();
+            let _ = slots.write(key, val);
             continue;
         }
         if key.len() != 32 {
@@ -69,8 +83,12 @@ pub fn reexec_sequential(
             spec.receipt.clone()
         } else {
             let r = apply_tx(&mut world, signed);
-            let keys = inferred_keys(signed);
-            let writes = if r.success { keys } else { Set::new() };
+            let mut writes = if r.success {
+                inferred_keys(signed)
+            } else {
+                Set::new()
+            };
+            writes.extend(world.storage_writes.iter().cloned());
             bump_writes(&mut slots, &world, &writes);
             r
         };

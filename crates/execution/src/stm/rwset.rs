@@ -53,6 +53,15 @@ pub fn inferred_keys(signed: &SignedTx) -> Set<Vec<u8>> {
     if signed.tx.as_stake().is_some() {
         keys.insert(STAKING_SLOT.to_vec());
     }
+    if let Some(c) = signed.tx.as_call() {
+        keys.insert(account_key(&c.to));
+    }
+    if let Some(from) = sender_of(signed) {
+        if signed.tx.as_deploy().is_some() {
+            let created = crate::wasm::deploy::create_address(&from, signed.tx.nonce);
+            keys.insert(account_key(&created));
+        }
+    }
     keys
 }
 
@@ -94,6 +103,12 @@ pub fn seed_and_read(
                     let _ = slots.write(key, acc.encode()).expect("seed write");
                 }
             }
+        } else if key.len() == 64 {
+            if let Some(val) = world.storage.get(key) {
+                if slots.validate(key, 0).unwrap() {
+                    let _ = slots.write(key, val).expect("seed storage");
+                }
+            }
         }
         let latest = latest_version(slots, key);
         let _ = slots.read(key, latest).expect("versioned_slot.read");
@@ -125,10 +140,20 @@ pub fn speculate_one(
     }
     let mut spec_world = pre.clone();
     let receipt = apply_tx(&mut spec_world, signed);
-    let writes = writes_from(signed, &receipt, &keys);
+    let mut reads = keys;
+    reads.extend(spec_world.storage_reads.iter().cloned());
+    for key in &reads {
+        if !observed.contains_key(key) {
+            let latest = latest_version(slots, key);
+            let _ = slots.read(key, latest).expect("versioned_slot.read");
+            observed.insert(key.clone(), latest);
+        }
+    }
+    let mut writes = writes_from(signed, &receipt, &reads);
+    writes.extend(spec_world.storage_writes.iter().cloned());
     SpecTx {
         index,
-        reads: keys,
+        reads,
         writes,
         observed,
         spec_world,

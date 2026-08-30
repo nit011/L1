@@ -12,7 +12,8 @@ use types::genesis::{Genesis, GenesisAccount};
 use types::header::HeaderFields;
 use types::tx::{SignedTx, Tx};
 use types::{
-    Address, Amount, ChainId, Hash, Height, Nonce, Round, TestClock, ValidatorId, GAS_TRANSFER,
+    Address, Amount, ChainId, Hash, Height, Nonce, Round, TestClock, ValidatorId, GAS_CALL,
+    GAS_DEPLOY, GAS_TRANSFER,
 };
 
 fn sk(b: u8) -> SecretKey {
@@ -235,5 +236,102 @@ fn run_prop_seed(seed: u64) {
 fn property_stm_equals_seq_three_seeds() {
     for seed in [1u64, 2, 99] {
         run_prop_seed(seed);
+    }
+}
+
+fn counter_wasm() -> Vec<u8> {
+    wat::parse_str(
+        r#"(module
+            (import "host" "sload" (func $sload (param i32) (result i64)))
+            (import "host" "sstore" (func $sstore (param i32 i64)))
+            (import "host" "reenter" (func $reenter))
+            (func (export "call")
+                (local $v i64)
+                (local.set $v (i64.add (call $sload (i32.const 0)) (i64.const 1)))
+                (call $sstore (i32.const 0) (local.get $v))
+            )
+        )"#,
+    )
+    .unwrap()
+}
+
+/// Mix of transfers, staking, and WASM deploy/call (overlapping storage).
+/// 256 cases × 3 seeds = 768 additional property trials.
+fn run_prop_wasm_seed(seed: u64) {
+    let mut config = ProptestConfig::with_cases(256);
+    config.rng_seed = RngSeed::Fixed(seed);
+    config.failure_persistence = None;
+    let mut runner = TestRunner::new(config);
+    let code = counter_wasm();
+    runner
+        .run(
+            &(2u8..6u8, 3usize..12usize, 0u8..4u8),
+            |(n_acct, n_tx, mode)| {
+                let (mut g, keys, addrs) = funded_genesis(n_acct);
+                let vid = ValidatorId::from_bytes([4u8; 48]);
+                g.insert_validator(vid, types::VotingPower(1));
+                let pre = World::from_genesis(&g);
+                let mut nonces = vec![0u64; keys.len()];
+                let mut txs: Vec<SignedTx> = Vec::new();
+                let deploy = Tx::deploy(
+                    ChainId::new(1),
+                    Nonce(nonces[0]),
+                    GAS_DEPLOY,
+                    Amount::new(1),
+                    code.clone(),
+                );
+                nonces[0] += 1;
+                txs.push(sign(&keys[0], deploy));
+                let contract = execution::wasm::deploy::create_address(&addrs[0], Nonce::ZERO);
+                for t in 1..n_tx {
+                    let from = if mode == 0 { 0usize } else { t % keys.len() };
+                    let kind = (t + mode as usize) % 3;
+                    let tx = if kind == 0 {
+                        Tx::call(
+                            ChainId::new(1),
+                            Nonce(nonces[from]),
+                            GAS_CALL + 80_000,
+                            Amount::new(1),
+                            contract,
+                            vec![],
+                        )
+                    } else if kind == 1 {
+                        let to_i = (from + 1 + t) % addrs.len();
+                        Tx::transfer(
+                            ChainId::new(1),
+                            Nonce(nonces[from]),
+                            GAS_TRANSFER,
+                            Amount::new(1),
+                            addrs[to_i],
+                            Amount::new(1),
+                        )
+                    } else {
+                        Tx::stake_bond(
+                            ChainId::new(1),
+                            Nonce(nonces[from]),
+                            GAS_TRANSFER,
+                            Amount::new(1),
+                            vid,
+                            Amount::new(200),
+                        )
+                    };
+                    nonces[from] += 1;
+                    txs.push(sign(&keys[from], tx));
+                }
+                let block = types::block::Block {
+                    header_fields: fields(),
+                    txs,
+                };
+                assert_eq_seq_stm(pre, &block);
+                Ok(())
+            },
+        )
+        .unwrap();
+}
+
+#[test]
+fn property_stm_equals_seq_wasm_three_seeds() {
+    for seed in [1u64, 2, 99] {
+        run_prop_wasm_seed(seed);
     }
 }
