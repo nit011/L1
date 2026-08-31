@@ -2528,6 +2528,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "light"
+version = "0.1.0"
+dependencies = [
+ "blst",
+ "consensus",
+ "crypto",
+ "execution",
+ "hex",
+ "network",
+ "node",
+ "rpc",
+ "serde_json",
+ "state",
+ "thiserror 2.0.20",
+ "types",
+]
+
+[[package]]
 name = "linked-hash-map"
 version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -1,0 +1,21 @@
+[package]
+name = "light"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+types = { path = "../types" }
+crypto = { path = "../crypto" }
+consensus = { path = "../consensus" }
+state = { path = "../state" }
+rpc = { path = "../rpc" }
+thiserror.workspace = true
+serde_json = "1"
+hex.workspace = true
+blst = "0.3"
+
+[dev-dependencies]
+network = { path = "../network" }
+node = { path = "../node" }
+execution = { path = "../execution" }
