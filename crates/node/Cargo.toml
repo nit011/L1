@@ -37,3 +37,4 @@ network = { path = "../network" }
 libp2p.workspace = true
 tokio.workspace = true
 blst = "0.3"
+observability = { path = "../observability" }

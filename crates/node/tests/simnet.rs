@@ -46,6 +46,10 @@ fn run_four_until_commit(runs: usize) {
             h0.iter().all(|&h| h == h0[0]),
             "split tips {h0:?} run {run}"
         );
+        let obs = observability::prometheus::Metrics::new();
+        obs.set_exporter_up(false);
+        obs.record_timings_ms(1_000, 1_000);
+        assert_eq!(obs.scrape(), Err(observability::prometheus::ExporterDown));
     }
 }
 

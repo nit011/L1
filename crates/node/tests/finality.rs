@@ -89,4 +89,35 @@ fn finality_lan_three_runs_against_architecture_targets() {
             s.time_to_first_commit_ms
         );
     }
+    let metrics = observability::prometheus::Metrics::new();
+    metrics.set_exporter_up(false);
+    for s in &all {
+        if let Some(&ms) = s.block_intervals_ms.first() {
+            metrics.record_timings_ms(ms as u64, ms as u64);
+        }
+    }
+    let report = observability::slo::evaluate(&metrics);
+    assert!(
+        !report.finality_breached,
+        "simnet finality {} ms should stay under 5s",
+        report.finality_ms
+    );
+    let rule = observability::alerts::AlertRule { for_samples: 3 };
+    let hist: Vec<_> = all
+        .iter()
+        .filter_map(|s| s.block_intervals_ms.first().copied())
+        .map(|ms| {
+            let m = observability::prometheus::Metrics::new();
+            m.record_timings_ms(ms as u64, ms as u64);
+            observability::slo::evaluate(&m)
+        })
+        .collect();
+    assert_eq!(
+        observability::alerts::evaluate_history(&hist, &rule),
+        observability::alerts::AlertState::Silent
+    );
+    assert_eq!(
+        metrics.scrape(),
+        Err(observability::prometheus::ExporterDown)
+    );
 }

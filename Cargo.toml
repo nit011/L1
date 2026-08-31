@@ -13,6 +13,7 @@ members = [
     "crates/rpc",
     "crates/node",
     "crates/light",
+    "crates/observability",
 ]
 
 [workspace.package]

@@ -1,0 +1,23 @@
+[package]
+name = "observability"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+types = { path = "../types" }
+consensus = { path = "../consensus" }
+network = { path = "../network" }
+mempool = { path = "../mempool" }
+rpc = { path = "../rpc" }
+tracing.workspace = true
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+serde_json = "1"
+
+[dev-dependencies]
+crypto = { path = "../crypto" }
+node = { path = "../node" }
+storage = { path = "../storage" }
+state = { path = "../state" }
+blst = "0.3"
+libp2p.workspace = true
