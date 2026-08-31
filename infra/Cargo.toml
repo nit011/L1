@@ -1,0 +1,20 @@
+[package]
+name = "iac"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+# Contract files live at the schema paths (`infra/genesis.rs`), not src/.
+[[bin]]
+name = "l1-genesis"
+path = "genesis.rs"
+
+[dependencies]
+types = { path = "../crates/types" }
+crypto = { path = "../crates/crypto" }
+node = { path = "../crates/node" }
+network = { path = "../crates/network" }
+libp2p.workspace = true
+blst = "0.3"
+hex.workspace = true

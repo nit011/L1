@@ -1,0 +1,8 @@
+.git
+**/target
+**/*.md
+docs/audits
+infra/data
+infra/terraform/.terraform
+infra/out-*
+**/.DS_Store

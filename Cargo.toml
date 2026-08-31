@@ -16,6 +16,7 @@ members = [
     "crates/observability",
     "crates/sdk",
     "crates/faucet",
+    "infra",
 ]
 
 [workspace.package]

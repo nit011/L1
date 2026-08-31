@@ -1,0 +1,104 @@
+# iac.docker_compose
+#
+# Four validator containers (same N as Tier 7 simnet / mvp.finality_lan).
+# Image: iac.dockerfile. Config files are the on-disk shape of NodeConfig
+# (node.config): genesis.bin, bootstrap.bin (p2p.bootstrap multiaddrs),
+# ed25519 identity, bls_sk, vrf_sk, plus vrf_pks.bin / vrf_secrets.bin.
+# min_block_time_ms is the NodeConfig default (1000 ms).
+#
+# Shared genesis: every service bind-mounts the SAME
+# `./data/shared/genesis.bin` at `/genesis/genesis.bin` (read-only).
+# bootstrap.sh copies those bytes into /data — nodes do not generate genesis.
+#
+# Generate data first: `cargo run -p iac --bin l1-genesis -- infra/data`
+
+name: l1-devnet
+
+x-node: &l1node
+  image: l1-node:devnet
+  build:
+    context: ..
+    dockerfile: infra/Dockerfile
+  networks:
+    l1net: {}
+  restart: "no"
+
+services:
+  node0:
+    <<: *l1node
+    hostname: node0
+    environment:
+      L1_DATA: /data
+      L1_GENESIS: /genesis/genesis.bin
+      L1_LISTEN: /ip4/0.0.0.0/udp/4001/quic-v1
+    volumes:
+      - ./data/shared:/genesis:ro
+      - ./data/node0:/data
+    networks:
+      l1net:
+        ipv4_address: 172.28.0.10
+
+  node1:
+    <<: *l1node
+    hostname: node1
+    environment:
+      L1_DATA: /data
+      L1_GENESIS: /genesis/genesis.bin
+      L1_LISTEN: /ip4/0.0.0.0/udp/4002/quic-v1
+    volumes:
+      - ./data/shared:/genesis:ro
+      - ./data/node1:/data
+    networks:
+      l1net:
+        ipv4_address: 172.28.0.11
+
+  node2:
+    <<: *l1node
+    hostname: node2
+    environment:
+      L1_DATA: /data
+      L1_GENESIS: /genesis/genesis.bin
+      L1_LISTEN: /ip4/0.0.0.0/udp/4003/quic-v1
+    volumes:
+      - ./data/shared:/genesis:ro
+      - ./data/node2:/data
+    networks:
+      l1net:
+        ipv4_address: 172.28.0.12
+
+  node3:
+    <<: *l1node
+    hostname: node3
+    environment:
+      L1_DATA: /data
+      L1_GENESIS: /genesis/genesis.bin
+      L1_LISTEN: /ip4/0.0.0.0/udp/4004/quic-v1
+    volumes:
+      - ./data/shared:/genesis:ro
+      - ./data/node3:/data
+    networks:
+      l1net:
+        ipv4_address: 172.28.0.13
+
+  joiner:
+    <<: *l1node
+    profiles: [join]
+    hostname: joiner
+    environment:
+      L1_DATA: /data
+      L1_GENESIS: /genesis/genesis.bin
+      L1_LISTEN: /ip4/0.0.0.0/udp/4010/quic-v1
+    volumes:
+      - ./data/shared:/genesis:ro
+      - ./data/joiner:/data
+    networks:
+      l1net:
+        ipv4_address: 172.28.0.20
+
+networks:
+  l1net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+

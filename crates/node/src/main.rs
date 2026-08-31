@@ -420,7 +420,13 @@ async fn main() {
         .behaviour_mut()
         .gossipsub
         .subscribe(&validator_vote_topic());
-    swarm.listen_on(quic_listen_local()).expect("listen");
+    // `L1_LISTEN` is for container / LAN bind (`/ip4/0.0.0.0/udp/N/quic-v1`).
+    // Default remains `p2p.quic`'s `quic_listen_local` (127.0.0.1) so simnet is unchanged.
+    let listen_addr = std::env::var("L1_LISTEN")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or_else(quic_listen_local);
+    swarm.listen_on(listen_addr).expect("listen");
     let mut listen = None;
     while listen.is_none() {
         match swarm.next().await {
@@ -464,6 +470,10 @@ async fn main() {
     let is_validator = mesh.is_validator(&our_id);
     let mut store = MemoryStore::new();
     init_store(&mut store, &cfg).unwrap();
+    append_event(
+        &dir,
+        &format!("GENESIS {}", hex::encode(cfg.genesis.hash().as_bytes())),
+    );
     append_event(
         &dir,
         &format!(
