@@ -1,0 +1,26 @@
+[package]
+name = "stress"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+types = { path = "../../crates/types" }
+crypto = { path = "../../crates/crypto" }
+sdk = { path = "../../crates/sdk" }
+iac = { path = "../../infra" }
+network = { path = "../../crates/network" }
+execution = { path = "../../crates/execution" }
+storage = { path = "../../crates/storage" }
+state = { path = "../../crates/state" }
+da = { path = "../../crates/da" }
+hex.workspace = true
+tokio.workspace = true
+libp2p.workspace = true
+
+[dev-dependencies]
+rand.workspace = true

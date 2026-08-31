@@ -1,0 +1,14 @@
+# Publish QUIC ports so a host-side SDK/gossip client (stress.load_harness)
+# can reach iac.docker_compose nodes. Used as:
+#   docker compose -f infra/docker-compose.yml -f tests/stress/compose.override.yml
+services:
+  node0:
+    ports: ["127.0.0.1:14001:4001/udp"]
+  node1:
+    ports: ["127.0.0.1:14002:4002/udp"]
+  node2:
+    ports: ["127.0.0.1:14003:4003/udp"]
+  node3:
+    ports: ["127.0.0.1:14004:4004/udp"]
+  joiner:
+    ports: ["127.0.0.1:14010:4010/udp"]

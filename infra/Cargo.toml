@@ -6,6 +6,12 @@ license.workspace = true
 publish = false
 
 # Contract files live at the schema paths (`infra/genesis.rs`), not src/.
+# Library target lets Tier 19 `stress.load_harness` call `materialize_with_bank`
+# without re-implementing genesis. The bin is the same file.
+[lib]
+name = "iac"
+path = "genesis.rs"
+
 [[bin]]
 name = "l1-genesis"
 path = "genesis.rs"

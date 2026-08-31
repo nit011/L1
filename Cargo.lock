@@ -4158,6 +4158,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "stress"
+version = "0.1.0"
+dependencies = [
+ "crypto",
+ "da",
+ "execution",
+ "hex",
+ "iac",
+ "libp2p",
+ "network",
+ "rand 0.8.8",
+ "sdk",
+ "state",
+ "storage",
+ "tokio",
+ "types",
+]
+
+[[package]]
 name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

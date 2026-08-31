@@ -14,6 +14,7 @@
 //! cargo run -p iac --bin l1-genesis -- infra/data
 //! ```
 
+use crypto::address::from_ed25519;
 use crypto::from_bls;
 use crypto::sig::ed25519::SecretKey;
 use crypto::vrf::public_key_from_seed;
@@ -26,8 +27,8 @@ use node::config::{
 use std::env;
 use std::path::Path;
 use types::collections::Map;
-use types::genesis::Genesis;
-use types::{ChainId, Hash, ValidatorId, VotingPower};
+use types::genesis::{Genesis, GenesisAccount};
+use types::{Amount, ChainId, Hash, Nonce, ValidatorId, VotingPower};
 
 /// Compose IPv4 addresses (must match `infra/docker-compose.yml` ipam).
 pub const NODE_IPS: [&str; 4] = ["172.28.0.10", "172.28.0.11", "172.28.0.12", "172.28.0.13"];
@@ -46,10 +47,34 @@ pub const N_VALIDATORS: usize = 4;
 /// - `shared/vrf_pks.bin` / `vrf_secrets.bin`
 /// - `node{i}/` — identity + bootstrap (`p2p.bootstrap` addressing)
 pub fn materialize(root: &Path) -> std::io::Result<Hash> {
+    materialize_with_bank(root, 0).map(|(h, _)| h)
+}
+
+/// Same as [`materialize`], plus `n_bank` deterministically keyed allocs
+/// (for load tests). Default IaC still uses `n_bank = 0` so the published
+/// genesis.hash is unchanged.
+pub fn materialize_with_bank(
+    root: &Path,
+    n_bank: usize,
+) -> std::io::Result<(Hash, Vec<SecretKey>)> {
     let shared = root.join("shared");
     std::fs::create_dir_all(&shared)?;
 
     let mut genesis = Genesis::new(ChainId::new(DEVNET_CHAIN_ID));
+    let mut bank = Vec::with_capacity(n_bank);
+    for i in 0..n_bank {
+        let sk = SecretKey::from_bytes(&bank_seed(i));
+        let addr = from_ed25519(&sk.verifying_key());
+        genesis.insert_alloc(
+            addr,
+            GenesisAccount {
+                balance: Amount::new(1_000_000_000),
+                nonce: Nonce::ZERO,
+                code_hash: Hash::ZERO,
+            },
+        );
+        bank.push(sk);
+    }
     let mut vrf_pks = Map::new();
     let mut vrf_secrets = Map::new();
     let mut identities: Vec<(NodeIdentity, [u8; 32], [u8; 32], ValidatorId)> = Vec::new();
@@ -123,7 +148,7 @@ pub fn materialize(root: &Path) -> std::io::Result<Hash> {
     std::fs::copy(shared.join("vrf_secrets.bin"), join.join("vrf_secrets.bin"))?;
     std::fs::copy(shared.join("genesis.hash"), join.join("genesis.hash"))?;
 
-    Ok(gh)
+    Ok((gh, bank))
 }
 
 /// After processes write `listen` files (127.0.0.1 QUIC), rewrite `bootstrap.bin`
@@ -163,10 +188,19 @@ fn ed25519_seed(i: usize) -> [u8; 32] {
     s
 }
 
+fn bank_seed(i: usize) -> [u8; 32] {
+    let mut s = [0xBAu8; 32];
+    s[0] = 0x18;
+    s[1] = (i / 256) as u8;
+    s[2] = (i % 256) as u8;
+    s
+}
+
 fn io_cfg(e: node::config::ConfigError) -> std::io::Error {
     std::io::Error::other(e.to_string())
 }
 
+#[allow(dead_code)] // compiled as both `lib` (stress harness) and `l1-genesis` bin
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.get(1).map(String::as_str) == Some("rewire") {
@@ -176,7 +210,7 @@ fn main() {
         return;
     }
     let out = args.get(1).cloned().unwrap_or_else(|| "infra/data".into());
-    let h = materialize(Path::new(&out)).expect("materialize genesis");
+    let (h, _) = materialize_with_bank(Path::new(&out), 0).expect("materialize genesis");
     println!("genesis.hash={}", hex::encode(h.as_bytes()));
     println!("wrote {out}");
 }
