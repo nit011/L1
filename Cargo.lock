@@ -4073,6 +4073,7 @@ dependencies = [
  "hex",
  "mempool",
  "rocksdb",
+ "state",
  "thiserror 2.0.20",
  "types",
 ]

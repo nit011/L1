@@ -19,4 +19,5 @@ rocksdb = { version = "0.22", optional = true }
 crypto = { path = "../crypto" }
 execution = { path = "../execution" }
 mempool = { path = "../mempool" }
+state = { path = "../state" }
 hex.workspace = true

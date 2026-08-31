@@ -5,8 +5,10 @@ pub mod codec;
 pub mod index;
 pub mod kv;
 pub mod memory;
+pub mod prune;
 pub mod replay;
 pub mod rocks;
+pub mod snapshot;
 pub mod wal;
 
 pub use kv::{apply_batch, BatchOp, Store};

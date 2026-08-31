@@ -35,6 +35,11 @@ impl AccountTrie {
     pub fn as_trie(&self) -> &Trie {
         &self.trie
     }
+
+    /// Remove an account (state expiry). Does not change [`Account`] encoding.
+    pub fn delete(&mut self, addr: &Address) {
+        crate::mpt::delete(&mut self.trie, &account_key(addr));
+    }
 }
 
 /// Contract storage trie: `storage_key → value` (independent of accounts).

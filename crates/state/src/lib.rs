@@ -2,6 +2,7 @@
 //! (architecture.md §4).
 
 pub mod account;
+pub mod expiry;
 pub mod merkle;
 pub mod mpt;
 pub mod root;
