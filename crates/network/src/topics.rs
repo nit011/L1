@@ -8,7 +8,8 @@
 
 use crate::codec::{decode_header, decode_proposal, decode_vote, GossipKind};
 use crate::gossip::{
-    ident_topic, TOPIC_BLOCK, TOPIC_EVIDENCE, TOPIC_PROPOSAL, TOPIC_TX, TOPIC_VOTE,
+    ident_topic, mesh_config, TOPIC_BLOCK, TOPIC_DA_CHUNKS, TOPIC_EVIDENCE, TOPIC_PROPOSAL,
+    TOPIC_TX, TOPIC_VOTE,
 };
 use blst::min_pk::{PublicKey, Signature};
 use consensus::evidence::{equivocation, Evidence};
@@ -41,6 +42,8 @@ pub enum TopicError {
     Block,
     /// `evidence.equivocation` rejected the pair.
     Evidence,
+    /// DA chunk codec / Merkle check failed.
+    DaChunk,
 }
 
 impl From<TypesError> for TopicError {
@@ -72,6 +75,37 @@ pub fn block_topic() -> IdentTopic {
 /// gossipsub topic for evidence. Contract: `gossip.evidence`.
 pub fn evidence_topic() -> IdentTopic {
     ident_topic(TOPIC_EVIDENCE)
+}
+
+/// gossipsub topic for individual DA chunks (not `gossip.block`).
+///
+/// Uses [`mesh_config`] / [`ident_topic`] from `gossip.mesh`. Light nodes can
+/// subscribe here without [`block_topic`]. Contract: `gossip.da_chunks`.
+pub fn da_chunks_topic() -> IdentTopic {
+    let _ = mesh_config();
+    ident_topic(TOPIC_DA_CHUNKS)
+}
+
+/// Split `block.body` and return gossip-ready chunks. Calls `da.chunk.split`
+/// and `da.root`. Contract: `gossip.da_chunks`.
+pub fn publish_da_chunks(block: &Block) -> Result<Vec<da::ProvenChunk>, TopicError> {
+    let shards = da::chunk::split(block).map_err(|_| TopicError::DaChunk)?;
+    let (root, proven) = da::root::commit(block).map_err(|_| TopicError::DaChunk)?;
+    if shards.len() != proven.len() {
+        return Err(TopicError::DaChunk);
+    }
+    let _ = da_chunks_topic();
+    let _ = root;
+    Ok(proven)
+}
+
+/// Accept a gossiped chunk if it matches `da.root`. Contract: `gossip.da_chunks`.
+pub fn ingest_da_chunk(root: &da::DaRoot, chunk: &da::ProvenChunk) -> Result<(), TopicError> {
+    if !da::verify_chunk(root, chunk) {
+        return Err(TopicError::DaChunk);
+    }
+    let _ = da_chunks_topic();
+    Ok(())
 }
 
 /// Whether a tx may be re-broadcast. Calls `mempool.verify`.
@@ -449,5 +483,55 @@ mod tests {
         let b = prevote(&sk, id, Height::GENESIS, Round::ZERO, &header_tag(2));
         ingest_evidence(&a, &b).unwrap();
         assert!(ingest_evidence(&a, &a).is_err());
+    }
+
+    fn small_block() -> Block {
+        let clock = TestClock::new(1_000);
+        let fields = HeaderFields::new(
+            &clock,
+            Height::GENESIS,
+            Round::ZERO,
+            ValidatorId::ZERO,
+            0,
+            1,
+        )
+        .unwrap();
+        Block {
+            header_fields: fields,
+            txs: vec![],
+        }
+    }
+
+    #[test]
+    fn da_chunks_topic_is_not_full_block_topic() {
+        assert_ne!(da_chunks_topic().hash(), block_topic().hash());
+        let _ = mesh_config();
+    }
+
+    #[test]
+    fn publish_and_ingest_da_chunks() {
+        let block = small_block();
+        let proven = publish_da_chunks(&block).unwrap();
+        let (root, _) = da::root::commit(&block).unwrap();
+        for c in &proven {
+            ingest_da_chunk(&root, c).unwrap();
+        }
+        let mut bad = proven[0].clone();
+        bad.shard.payload[0] ^= 1;
+        assert_eq!(ingest_da_chunk(&root, &bad), Err(TopicError::DaChunk));
+    }
+
+    #[test]
+    fn da_chunk_codec_round_trip_feeds_das_sample() {
+        use crate::codec::{decode_da_chunk, encode_da_chunk};
+        let block = small_block();
+        let (root, proven) = da::root::commit(&block).unwrap();
+        let mut restored = Vec::new();
+        for c in &proven {
+            restored.push(decode_da_chunk(&encode_da_chunk(c)).unwrap());
+        }
+        let store = da::MemoryChunks::from_proven(restored);
+        let report = da::sample(&root, &store);
+        assert_eq!(da::fail_closed(&report), da::Availability::Available);
     }
 }

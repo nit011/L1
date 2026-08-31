@@ -1,6 +1,6 @@
 //! Gossipsub mesh (architecture.md §5 Block/tx propagation).
 //!
-//! Parameterized so [`crate::topics`] can subscribe `/l1/{tx,proposal,vote,block,evidence,headers}`.
+//! Parameterized so [`crate::topics`] can subscribe `/l1/{tx,proposal,vote,block,evidence,headers,da-chunks}`.
 //! Transport is QUIC (`p2p.quic`). Consensus types never appear as libp2p generics here.
 
 use crate::identity::NodeIdentity;
@@ -27,6 +27,8 @@ pub const TOPIC_BLOCK: &str = "/l1/block/1";
 pub const TOPIC_EVIDENCE: &str = "/l1/evidence/1";
 /// Header-first announcements.
 pub const TOPIC_HEADERS: &str = "/l1/headers/1";
+/// Individual DA chunks (light nodes; not the full-block topic). Contract: `gossip.da_chunks`.
+pub const TOPIC_DA_CHUNKS: &str = da::das::TOPIC_DA_CHUNKS;
 
 /// Mesh parameters used by scoring and rate limits. Contract: `gossip.mesh`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -65,6 +67,7 @@ pub fn all_topics() -> Vec<IdentTopic> {
         ident_topic(TOPIC_BLOCK),
         ident_topic(TOPIC_EVIDENCE),
         ident_topic(TOPIC_HEADERS),
+        ident_topic(TOPIC_DA_CHUNKS),
     ]
 }
 
@@ -194,7 +197,10 @@ mod tests {
         let cfg = mesh_config();
         assert_eq!(cfg.mesh_n, 4);
         let topics = all_topics();
-        assert_eq!(topics.len(), 6);
+        assert_eq!(topics.len(), 7);
+        assert!(topics
+            .iter()
+            .any(|t| t.hash() == ident_topic(TOPIC_DA_CHUNKS).hash()));
         assert!(topics
             .iter()
             .any(|t| t.hash() == ident_topic(TOPIC_TX).hash()));

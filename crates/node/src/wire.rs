@@ -5,6 +5,7 @@
 //! - [`wire_propose`]: `cons.propose` → gossip.proposal
 //! - [`wire_vote`]: `cons.prevote_step` / `cons.precommit_step` → `mesh.validator`
 //! - [`wire_commit`]: `cons.commit` then WAL + `store.block.put` then gossip.block
+//! - [`wire_da`]: after [`wire_commit`], chunk + `gossip.da_chunks` (never DAS-gates commit)
 //! - [`wire_sync`]: `sync.headers_then_bodies` then the same persist path as commit
 
 use crate::config::NodeConfig;
@@ -15,12 +16,16 @@ use consensus::steps::{commit, precommit_step, prevote_step, Finalized, PrevoteE
 use consensus::vote::{Vote, VoteReplayLog};
 use consensus::vrf as cons_vrf;
 use consensus::vrf::VrfSeed;
+use da::{DaRoot, ProvenChunk};
 use execution::builder::{build_local, BuiltBlock};
 use execution::seq::World;
 use mempool::Mempool;
 use network::codec::{encode_proposal, encode_vote};
 use network::sync::{headers_then_bodies, BodyOffer};
-use network::topics::{ingest_block, ingest_proposal, ingest_tx, ingest_vote, TopicError};
+use network::topics::{
+    ingest_block, ingest_da_chunk, ingest_proposal, ingest_tx, ingest_vote, publish_da_chunks,
+    TopicError,
+};
 use network::validator_mesh::{ingest_validator_proposal, ingest_validator_vote, ValidatorMesh};
 use state::account::Account;
 use storage::blocks::{put_block, put_genesis_hash};
@@ -30,7 +35,7 @@ use storage::wal::{clear_wal, write_wal};
 use thiserror::Error;
 use types::block::Block;
 use types::collections::Map;
-use types::header::Header;
+use types::header::{apply_da_root, Header};
 use types::tx::SignedTx;
 use types::{Clock, Hash, Height, Round, ValidatorId, VotingPower};
 
@@ -258,6 +263,54 @@ pub fn wire_commit<S: Store, B: BlockBroadcast>(
     };
     persist_then_broadcast(store, &proposal.header, block, receipts, &f.app_hash, sink)?;
     Ok(Some(f))
+}
+
+/// Gossip sink for DA chunks (separate from [`BlockBroadcast`] so commit stays DAS-free).
+pub trait DaChunkSink {
+    /// One erasure-coded chunk on `gossip.da_chunks`.
+    fn broadcast_da_chunk(&mut self, chunk: &ProvenChunk);
+}
+
+impl DaChunkSink for TraceSink {
+    fn broadcast_da_chunk(&mut self, _chunk: &ProvenChunk) {
+        self.order.push("da_chunk");
+    }
+}
+
+/// After [`wire_commit`] succeeds, erasure-code the body and gossip chunks.
+///
+/// Calls `node.wire.commit`, `header.da_root`, and `gossip.da_chunks`. Does
+/// **not** call `das.sample` / `das.fail_closed` — those must never gate
+/// commit (architecture.md §6 is additive for light nodes). Contract: `node.wire.da`.
+#[allow(clippy::too_many_arguments)]
+pub fn wire_da<S: Store, B: BlockBroadcast, D: DaChunkSink>(
+    precommits: &[Vote],
+    validators: &Map<ValidatorId, VotingPower>,
+    reachable: VotingPower,
+    proposal: &Proposal,
+    commits: &mut CommitLog,
+    store: &mut S,
+    block: &Block,
+    receipts: &[Vec<u8>],
+    sink: &mut B,
+    da_sink: &mut D,
+) -> Result<Option<(Finalized, DaRoot)>, WireError> {
+    let f = wire_commit(
+        precommits, validators, reachable, proposal, commits, store, block, receipts, sink,
+    )?;
+    let Some(f) = f else {
+        return Ok(None);
+    };
+    let chunks = publish_da_chunks(block).map_err(|_| WireError::Gossip)?;
+    let (root, _) = da::root::commit(block).map_err(|_| WireError::Gossip)?;
+    let mut da_header = proposal.header.clone();
+    apply_da_root(&mut da_header, root.merkle);
+    for c in &chunks {
+        ingest_da_chunk(&root, c).map_err(|_| WireError::Gossip)?;
+        da_sink.broadcast_da_chunk(c);
+    }
+    let _ = da_header.hash();
+    Ok(Some((f, root)))
 }
 
 /// Catch-up fetch then the same persist path. Trigger: local tip behind. Contract: `node.wire.sync`.
@@ -612,5 +665,122 @@ mod tests {
             execution::seq::apply_block(World::from_genesis(&cfg.genesis), &built.block).2
                 == f.app_hash
         );
+    }
+
+    #[test]
+    fn wire_da_runs_after_commit_and_does_not_gate_it() {
+        let (cfg, keys, vrf_pks, mesh) = four_setup();
+        let src = round_vrf_source(&cfg.genesis.validators, Round::ZERO).unwrap();
+        let src_row = keys.iter().find(|k| k.1 == src).unwrap();
+        let seed = cons_vrf::derive_seed(&[1u8; 32], types::Epoch::ZERO);
+        let (_, proof) = cons_vrf::leader_prove(&src_row.2, &seed, &src).unwrap();
+        let winner =
+            cons_vrf::weighted_leader(&src_row.3, &seed, &src, &proof, &cfg.genesis.validators)
+                .unwrap();
+        let w = keys.iter().find(|k| k.1 == winner).unwrap();
+        let clock = TestClock::new(1_000);
+        let mut pool = Mempool::new(&cfg.genesis.params.registry);
+        let mut sink = TraceSink::default();
+        let (proposal, built) = wire_propose(
+            &cfg,
+            &w.0,
+            winner,
+            src,
+            &vrf_pks.get(&src).copied().unwrap(),
+            &proof,
+            &seed,
+            Height::GENESIS,
+            Round::ZERO,
+            &clock,
+            0,
+            World::from_genesis(&cfg.genesis),
+            &mut pool,
+            &mut sink,
+        )
+        .unwrap();
+        let mut log = VoteReplayLog::new();
+        let mut prevotes = Vec::new();
+        let mut precommits = Vec::new();
+        for k in &keys {
+            let pv = wire_vote(
+                &mesh,
+                &k.0,
+                k.1,
+                &proposal,
+                &vrf_pks,
+                &seed,
+                Height::GENESIS,
+                Round::ZERO,
+                None,
+                &mut log,
+                &mut sink,
+            )
+            .unwrap();
+            prevotes.push(pv);
+        }
+        for k in &keys {
+            let (pc, _) = wire_precommit(
+                &mesh,
+                &k.0,
+                k.1,
+                Height::GENESIS,
+                Round::ZERO,
+                &prevotes,
+                &proposal.header,
+                &mut log,
+                &mut sink,
+            )
+            .unwrap();
+            precommits.push(pc);
+        }
+        let mut commits = CommitLog::new();
+        let mut store = MemoryStore::new();
+        init_store(&mut store, &cfg).unwrap();
+        let rec: Vec<_> = built.receipts.iter().map(|r| r.encode()).collect();
+        let total = VotingPower(4);
+        struct Collect(Vec<da::ProvenChunk>);
+        impl DaChunkSink for Collect {
+            fn broadcast_da_chunk(&mut self, chunk: &da::ProvenChunk) {
+                self.0.push(chunk.clone());
+            }
+        }
+        let mut da_sink = Collect(Vec::new());
+        let (f, root) = wire_da(
+            &precommits,
+            &cfg.genesis.validators,
+            total,
+            &proposal,
+            &mut commits,
+            &mut store,
+            &built.block,
+            &rec,
+            &mut sink,
+            &mut da_sink,
+        )
+        .unwrap()
+        .unwrap();
+        assert_eq!(f.height, Height::GENESIS);
+        assert_eq!(da_sink.0.len(), da::DATA_SHARDS + da::PARITY_SHARDS);
+        let stored = storage::blocks::get_header(&store, Height::GENESIS)
+            .unwrap()
+            .unwrap();
+        assert_eq!(stored.da_root, types::header::DA_ROOT_PLACEHOLDER);
+        assert_eq!(stored.hash(), proposal.header.hash());
+        let mem = da::MemoryChunks::from_proven(da_sink.0);
+        let report = da::sample(&root, &mem);
+        assert_eq!(da::fail_closed(&report), da::Availability::Available);
+        let src = include_str!("wire.rs");
+        let commit_fn = src
+            .split("pub fn wire_commit")
+            .nth(1)
+            .unwrap()
+            .split("pub trait DaChunkSink")
+            .next()
+            .unwrap();
+        assert!(commit_fn.contains("let f = commit("));
+        assert!(!commit_fn.contains("das::sample"));
+        assert!(!commit_fn.contains("fail_closed"));
+        assert!(!commit_fn.contains("publish_da_chunks"));
+        assert!(!commit_fn.contains("sample("));
     }
 }

@@ -7,3 +7,12 @@ license.workspace = true
 [dependencies]
 thiserror.workspace = true
 reed-solomon-erasure.workspace = true
+types = { path = "../types" }
+crypto = { path = "../crypto" }
+state = { path = "../state" }
+storage = { path = "../storage" }
+ark-bls12-381.workspace = true
+ark-ff.workspace = true
+
+[dev-dependencies]
+hex.workspace = true

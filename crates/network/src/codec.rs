@@ -5,13 +5,16 @@
 //! bespoke codec per topic.
 
 use crate::gossip::{
-    ident_topic, TOPIC_BLOCK, TOPIC_EVIDENCE, TOPIC_HEADERS, TOPIC_PROPOSAL, TOPIC_TX, TOPIC_VOTE,
+    ident_topic, TOPIC_BLOCK, TOPIC_DA_CHUNKS, TOPIC_EVIDENCE, TOPIC_HEADERS, TOPIC_PROPOSAL,
+    TOPIC_TX, TOPIC_VOTE,
 };
 use consensus::propose::Proposal;
 use consensus::replay::VoteKind;
 use consensus::vote::{Vote, VoteBlock};
 use crypto::vrf::Proof as VrfProof;
+use da::ProvenChunk;
 use libp2p::gossipsub::IdentTopic;
+use state::merkle::MerkleProof;
 use storage::codec::header_from_preimage;
 use types::encoding::{decode, encode};
 use types::header::Header;
@@ -33,6 +36,8 @@ pub enum GossipKind {
     Evidence = 5,
     /// `gossip.headers_first`
     Header = 6,
+    /// `gossip.da_chunks`
+    DaChunk = 7,
 }
 
 impl GossipKind {
@@ -44,6 +49,7 @@ impl GossipKind {
             4 => Some(Self::Block),
             5 => Some(Self::Evidence),
             6 => Some(Self::Header),
+            7 => Some(Self::DaChunk),
             _ => None,
         }
     }
@@ -57,6 +63,7 @@ impl GossipKind {
             Self::Block => TOPIC_BLOCK,
             Self::Evidence => TOPIC_EVIDENCE,
             Self::Header => TOPIC_HEADERS,
+            Self::DaChunk => TOPIC_DA_CHUNKS,
         })
     }
 }
@@ -218,6 +225,57 @@ pub fn encode_header(header: &Header) -> Vec<u8> {
 pub fn decode_header(buf: &[u8]) -> Result<Header, TypesError> {
     let p = decode(buf)?;
     header_from_preimage(&p)
+}
+
+/// Encode a proven DA chunk for `gossip.da_chunks`.
+pub fn encode_da_chunk(c: &ProvenChunk) -> Vec<u8> {
+    let mut p = Vec::new();
+    p.extend_from_slice(&c.shard.index.to_be_bytes());
+    p.extend_from_slice(&(c.shard.payload.len() as u32).to_be_bytes());
+    p.extend_from_slice(&c.shard.payload);
+    p.extend_from_slice(&(c.proof.leaf_index as u32).to_be_bytes());
+    p.extend_from_slice(&(c.proof.siblings.len() as u32).to_be_bytes());
+    for s in &c.proof.siblings {
+        p.extend_from_slice(s);
+    }
+    encode(&p)
+}
+
+/// Inverse of [`encode_da_chunk`].
+pub fn decode_da_chunk(buf: &[u8]) -> Result<ProvenChunk, TypesError> {
+    let p = decode(buf)?;
+    if p.len() < 2 + 4 {
+        return Err(TypesError::CodecTruncated);
+    }
+    let index = u16::from_be_bytes(p[0..2].try_into().unwrap());
+    let plen = u32::from_be_bytes(p[2..6].try_into().unwrap()) as usize;
+    let mut i = 6usize;
+    if i + plen + 8 > p.len() {
+        return Err(TypesError::CodecTruncated);
+    }
+    let payload = p[i..i + plen].to_vec();
+    i += plen;
+    let leaf_index = u32::from_be_bytes(p[i..i + 4].try_into().unwrap()) as usize;
+    i += 4;
+    let n = u32::from_be_bytes(p[i..i + 4].try_into().unwrap()) as usize;
+    i += 4;
+    if i + n * 32 != p.len() {
+        return Err(TypesError::CodecTruncated);
+    }
+    let mut siblings = Vec::with_capacity(n);
+    for _ in 0..n {
+        let mut s = [0u8; 32];
+        s.copy_from_slice(&p[i..i + 32]);
+        siblings.push(s);
+        i += 32;
+    }
+    Ok(ProvenChunk {
+        shard: da::DaShard { index, payload },
+        proof: MerkleProof {
+            leaf_index,
+            siblings,
+        },
+    })
 }
 
 #[cfg(test)]

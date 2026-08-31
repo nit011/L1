@@ -1002,8 +1002,15 @@ dependencies = [
 name = "da"
 version = "0.1.0"
 dependencies = [
+ "ark-bls12-381",
+ "ark-ff",
+ "crypto",
+ "hex",
  "reed-solomon-erasure",
+ "state",
+ "storage",
  "thiserror 2.0.20",
+ "types",
 ]
 
 [[package]]
@@ -2797,6 +2804,7 @@ dependencies = [
  "blst",
  "consensus",
  "crypto",
+ "da",
  "hex",
  "libp2p",
  "mempool",
@@ -2827,6 +2835,7 @@ dependencies = [
  "blst",
  "consensus",
  "crypto",
+ "da",
  "execution",
  "hex",
  "libp2p",

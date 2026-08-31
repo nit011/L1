@@ -11,6 +11,7 @@ consensus = { path = "../consensus" }
 mempool = { path = "../mempool" }
 storage = { path = "../storage" }
 state = { path = "../state" }
+da = { path = "../da" }
 tokio.workspace = true
 thiserror.workspace = true
 tracing.workspace = true

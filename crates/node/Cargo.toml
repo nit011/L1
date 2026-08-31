@@ -17,6 +17,7 @@ execution = { path = "../execution" }
 mempool = { path = "../mempool" }
 consensus = { path = "../consensus" }
 network = { path = "../network" }
+da = { path = "../da" }
 tokio.workspace = true
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

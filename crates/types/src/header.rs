@@ -7,7 +7,16 @@
 //!  tx_root:32 || state_root:32 || receipts_root:32 || validators_hash:32 ||
 //!  da_root:32`
 //!
-//! `da_root` is [`DA_ROOT_PLACEHOLDER`] (all zeros) until Tier 12.
+//! `da_root` is [`DA_ROOT_PLACEHOLDER`] (all zeros) until a caller invokes
+//! [`apply_da_root`] (contract `header.da_root`). **Frozen-header decision:
+//! `header.hash` is LEFT UNCHANGED** — the preimage layout is exactly what
+//! Tier 3 froze (`da_root:32` already hashed). Filling the slot with a real
+//! `da.root` Merkle digest changes that header's hash *value* but does not
+//! add or remove hashed fields. Tier 3 golden vectors keep using the
+//! placeholder and therefore keep the same hashes. Validators authenticate a
+//! real DA root either (1) by writing it here *before* voting so the QC
+//! covers it, or (2) by recomputing `da.root` from `block.body` they already
+//! have (full nodes). This tier does not rewrite `hash_preimage`.
 
 use crate::collections::Map;
 use crate::hashing::{blake3_array, domain_wrap, merkle_root};
@@ -105,7 +114,7 @@ pub struct Header {
     pub receipts_root: Hash,
     /// Validator-set Merkle root.
     pub validators_hash: Hash,
-    /// Always [`DA_ROOT_PLACEHOLDER`] at this tier.
+    /// DA Merkle root. Zero until [`apply_da_root`] (`block.da_root.placeholder`).
     pub da_root: Hash,
 }
 
@@ -129,6 +138,13 @@ impl Header {
     pub fn hash(&self) -> Hash {
         Hash::from_bytes(blake3_array(&domain_wrap(b"header", &self.hash_preimage())))
     }
+}
+
+/// Write `da.root`'s Merkle commitment into the Tier 3 placeholder field.
+///
+/// Does **not** change [`Header::hash_preimage`]'s layout. Contract: `header.da_root`.
+pub fn apply_da_root(header: &mut Header, da_merkle_root: Hash) {
+    header.da_root = da_merkle_root;
 }
 
 #[cfg(test)]
@@ -173,5 +189,35 @@ mod tests {
         h.tx_root = Hash::from_bytes([1u8; 32]);
         assert_ne!(a, h.hash());
         assert_eq!(h.da_root, DA_ROOT_PLACEHOLDER);
+    }
+
+    #[test]
+    fn apply_da_root_fills_placeholder_without_changing_preimage_layout() {
+        let clock = TestClock::new(1_000_000);
+        let fields = HeaderFields::new(
+            &clock,
+            Height::GENESIS,
+            Round::ZERO,
+            ValidatorId::ZERO,
+            0,
+            1_000,
+        )
+        .unwrap();
+        let mut h = Header {
+            fields,
+            tx_root: Hash::ZERO,
+            state_root: Hash::ZERO,
+            receipts_root: Hash::ZERO,
+            validators_hash: Hash::ZERO,
+            da_root: DA_ROOT_PLACEHOLDER,
+        };
+        let before = h.hash();
+        let pre_len = h.hash_preimage().len();
+        apply_da_root(&mut h, Hash::from_bytes([9u8; 32]));
+        assert_eq!(h.da_root, Hash::from_bytes([9u8; 32]));
+        assert_eq!(h.hash_preimage().len(), pre_len);
+        assert_ne!(h.hash(), before);
+        h.da_root = DA_ROOT_PLACEHOLDER;
+        assert_eq!(h.hash(), before);
     }
 }
